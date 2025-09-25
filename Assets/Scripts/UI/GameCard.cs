@@ -38,10 +38,12 @@ namespace CyberSpeed.UI
         public int CardID { get { return cardID; } private set { cardID = value; } }
         public bool IsFlipped { get { return isFlipped; } private set { isFlipped = value; } }
         public bool IsAnimating { get { return isAnimating; } private set { isAnimating = value; } }
+        public bool IsInteractable { get { return isInteractable; } private set { isInteractable = value; } }
         public Sprite CardSprite { get { return cardSprite; } private set { cardSprite = value; } }
 
-        private void InitCard(int cardID, Sprite frontSprite)
+        public void InitCard(int cardID, Sprite frontSprite, Action<GameCard> cardClicked)
         {
+            OnCardClicked = cardClicked;
             this.cardID = cardID;
             this.cardSprite = frontSprite;
 
@@ -53,6 +55,11 @@ namespace CyberSpeed.UI
             {
                 front.sprite = frontSprite;
             }
+        }
+
+        public void Matched()
+        {
+            IsInteractable = false;
         }
 
         public void OnPointerClick(PointerEventData eventData)

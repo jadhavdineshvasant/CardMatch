@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3ba02c54b51b40ec9aca128dbecd772, type: 3}
+  m_Name: CardData
+  m_EditorClassIdentifier: 
+  cardDataList:
+  - cardID: 0
+    cardSprite: {fileID: 21300000, guid: 1fcf7cbd3293c48a7853d6246320cce9, type: 3}
+  - cardID: 1
+    cardSprite: {fileID: 21300000, guid: 0fa62e3911a6d41958fc3a76cb2fc859, type: 3}
+  - cardID: 2
+    cardSprite: {fileID: 21300000, guid: a7fd2884ce8594a1596487479a333a29, type: 3}
+  - cardID: 3
+    cardSprite: {fileID: 21300000, guid: bfddd5497784543a780f3955849dde50, type: 3}
+  - cardID: 4
+    cardSprite: {fileID: 21300000, guid: 8b8a854e100de486ca3b2be1912aa539, type: 3}
+  - cardID: 5
+    cardSprite: {fileID: 21300000, guid: a426b27bccea540b3bfead615f1cae8f, type: 3}
+  - cardID: 6
+    cardSprite: {fileID: 21300000, guid: 39951347da5e24683b93039dc4cbf1eb, type: 3}
+  - cardID: 7
+    cardSprite: {fileID: 21300000, guid: 3f9d81100c98b4f1f915147643665f9a, type: 3}
+  - cardID: 8
+    cardSprite: {fileID: 21300000, guid: d03036f7410b14dc195dd06643d4113c, type: 3}
+  - cardID: 9
+    cardSprite: {fileID: 21300000, guid: bcd739b02021f4aaca8edb85c88ed9ab, type: 3}
+  - cardID: 10
+    cardSprite: {fileID: 21300000, guid: 10f5709a5cdca4c24aa62ec27a098a5b, type: 3}
+  - cardID: 11
+    cardSprite: {fileID: 21300000, guid: 0480154f530714b7989a9b17308a5198, type: 3}
+  - cardID: 12
+    cardSprite: {fileID: 21300000, guid: 674ad9c5210674aa89316a4cbcc537e9, type: 3}
+  - cardID: 13
+    cardSprite: {fileID: 21300000, guid: e9f8d1acd54a14d7fbec8c126d553ab8, type: 3}
+  - cardID: 14
+    cardSprite: {fileID: 21300000, guid: 67e75d05daf774859a0eade191fe408a, type: 3}
+  - cardID: 15
+    cardSprite: {fileID: 21300000, guid: 07e04c2b7a67d44ca860c91bd898a0c9, type: 3}
+  - cardID: 16
+    cardSprite: {fileID: 21300000, guid: 0d978585b9faf42a2b9378803995d6ef, type: 3}
+  - cardID: 17
+    cardSprite: {fileID: 21300000, guid: 7938cd3fb585544339f5b88691a271c4, type: 3}
+  - cardID: 18
+    cardSprite: {fileID: 21300000, guid: df3e27b4822524711996d45cc32ac46e, type: 3}
+  - cardID: 19
+    cardSprite: {fileID: 21300000, guid: b47aa625387df4a819fbd533018a3b40, type: 3}

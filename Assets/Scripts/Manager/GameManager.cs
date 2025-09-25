@@ -14,13 +14,19 @@ namespace CyberSpeed.Manager
 
         [Header("Scriptable Objects References")]
         [SerializeField] private DifficultyLevelSO difficultyLevelSO;
+        [SerializeField] private CardSO cardSO;
+
+        [Header("Object Pool References")]
+        [SerializeField] private ObjectPool cardPool;
 
         [Header("UI Screens")]
         [SerializeField] private LevelSelectUI levelSelectUIHandler;
         [SerializeField] private IntroScreenUI introUIHandler;
         [SerializeField] private ResultScreenUI resultScreenUIHandler;
 
-        DifficultyLevelData selectedLevel;
+        // [SerializeField] private CardsGrid cardGrid;
+
+        private DifficultyLevelData selectedLevel;
 
         void Awake()
         {
@@ -84,8 +90,9 @@ namespace CyberSpeed.Manager
 
         private void OnLevelClicked(DifficultyLevelData levelData)
         {
-            Debug.Log($"level clicked {levelData.levelName}");
             selectedLevel = levelData;
+            HideAllScreens();
+            EventDispatcher.Instance.Dispatch(EventConstants.ON_LEVEL_STARTED, levelData);
         }
 
         public void OnPlayAgainClicked()
@@ -111,5 +118,48 @@ namespace CyberSpeed.Manager
         // {
         //     ShowResultScreenUI();
         // }
+
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                SpawnCard(new Vector3(0, 0, 0));
+            }
+
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                // HideCard();
+                for (int i = 0; i < 20; i++)
+                {
+                    SpawnCard(new Vector3(0, 0, 0));
+                }
+            }
+        }
+
+        void SpawnCard(Vector3 position)
+        {
+            GameObject card = cardPool.Get();
+            card.transform.position = position;
+        }
+
+        void HideCard(GameObject card)
+        {
+            cardPool.Release(card);
+        }
+
+        public CardSO GetCardData()
+        {
+            return cardSO;
+        }
+
+        public DifficultyLevelSO GetLevelData()
+        {
+            return difficultyLevelSO;
+        }
+
+        public ObjectPool GetObjectPool()
+        {
+            return cardPool;
+        }
     }
 }

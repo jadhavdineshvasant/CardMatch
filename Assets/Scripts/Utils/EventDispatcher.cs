@@ -154,5 +154,14 @@ namespace CyberSpeed.Utils
             // Clean up listeners to avoid memory leaks
             eventListeners.Clear();
         }
+
+        private void OnApplicationQuit()
+        {
+            if (_instance != null)
+            {
+                DestroyImmediate(_instance.gameObject);
+                _instance = null;
+            }
+        }
     }
 }
