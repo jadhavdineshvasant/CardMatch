@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7685f888260534e17bbd010f223b543d, type: 3}
+  m_Name: DifficultyLevelData
+  m_EditorClassIdentifier: 
+  levelDataList:
+  - levelName: EASY
+    levelSprite: {fileID: 21300000, guid: 4b3af7845dec94c67ac45e899e29f35b, type: 3}
+    previewDuration: 4
+    rowsCount: 2
+    colsCount: 2
+    scoreMultiplier: 2
+    titleColor: {r: 0.1882353, g: 0.49019608, b: 0.15294118, a: 1}
+  - levelName: NORMAL
+    levelSprite: {fileID: 21300000, guid: 5e3a1fb95f29d4c5c9b4b18ed5f39208, type: 3}
+    previewDuration: 3
+    rowsCount: 3
+    colsCount: 5
+    scoreMultiplier: 5
+    titleColor: {r: 0.20392157, g: 0.50980395, b: 0.5058824, a: 1}
+  - levelName: HARD
+    levelSprite: {fileID: 21300000, guid: 2c65ce4b9b1594fd7b196712249b1ab0, type: 3}
+    previewDuration: 2.5
+    rowsCount: 4
+    colsCount: 6
+    scoreMultiplier: 10
+    titleColor: {r: 0.7058824, g: 0.62352943, b: 0.1254902, a: 1}
+  - levelName: EXPERT
+    levelSprite: {fileID: 21300000, guid: f1417f6409b764c8fbf741e60d7d95b1, type: 3}
+    previewDuration: 2
+    rowsCount: 5
+    colsCount: 8
+    scoreMultiplier: 20
+    titleColor: {r: 0.65882355, g: 0.25882354, b: 0.6666667, a: 1}
