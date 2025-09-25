@@ -25,16 +25,13 @@ namespace CyberSpeed.UI
         [SerializeField] private int cardID;
         [SerializeField] private Sprite cardSprite;
 
-        // Card states
         private bool isFlipped = false;
         private bool isAnimating = false;
         private bool isInteractable = true;
 
-        // Events
         public static event Action<GameCard> OnCardFlipped;
         public static event Action<GameCard> OnCardClicked;
 
-        // Properties
         public int CardID { get { return cardID; } private set { cardID = value; } }
         public bool IsFlipped { get { return isFlipped; } private set { isFlipped = value; } }
         public bool IsAnimating { get { return isAnimating; } private set { isAnimating = value; } }

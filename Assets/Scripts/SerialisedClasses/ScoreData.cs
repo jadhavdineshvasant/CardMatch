@@ -12,6 +12,6 @@ namespace CyberSpeed.SerialisedClasses
         public int TotalTurns;
         public int TotalMatches;
         public int TotalComboStreaks;
-        // public int TotalScore;
+        public int TotalScore;
     }
 }
