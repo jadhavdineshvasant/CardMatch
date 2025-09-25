@@ -100,7 +100,9 @@ namespace CyberSpeed.Manager
 
             Debug.Log($"Checking match: Card1 ID={openCard.CardID}, Card2 ID={clickedCardID}");
 
-            yield return new WaitForSeconds(0.75f);
+            float waitTime = isMatch ? 0.3f : 0.8f;
+
+            yield return new WaitForSeconds(waitTime);
 
             if (isMatch)
             {

@@ -58,6 +58,17 @@ namespace CyberSpeed.UI
         public void Matched()
         {
             IsInteractable = false;
+            SetMatchedAlpha();
+        }
+
+        private void SetMatchedAlpha()
+        {
+            front.color = new Color(1, 1, 1, 0.5f);
+        }
+
+        private void ResetMatchedAlpha()
+        {
+            front.color = new Color(1, 1, 1, 1);
         }
 
         public void SetInteractable(bool interactable)
@@ -183,6 +194,7 @@ namespace CyberSpeed.UI
         public void ResetCard()
         {
             StopAllCoroutines();
+            ResetMatchedAlpha();
             isFlipped = false;
             isAnimating = false;
             isInteractable = true; // Reset interactable state
