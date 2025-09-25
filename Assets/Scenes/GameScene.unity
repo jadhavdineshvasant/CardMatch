@@ -5992,6 +5992,7 @@ MonoBehaviour:
   levelSelectUIHandler: {fileID: 240255776}
   introUIHandler: {fileID: 1029121468}
   resultScreenUIHandler: {fileID: 314562374}
+  gameHandler: {fileID: 2003854505}
 --- !u!4 &1692967927
 Transform:
   m_ObjectHideFlags: 0

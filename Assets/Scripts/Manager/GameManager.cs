@@ -23,6 +23,7 @@ namespace CyberSpeed.Manager
         [SerializeField] private LevelSelectUI levelSelectUIHandler;
         [SerializeField] private IntroScreenUI introUIHandler;
         [SerializeField] private ResultScreenUI resultScreenUIHandler;
+        [SerializeField] private GameController gameHandler;
 
         // [SerializeField] private CardsGrid cardGrid;
 
@@ -92,7 +93,7 @@ namespace CyberSpeed.Manager
         {
             selectedLevel = levelData;
             HideAllScreens();
-            EventDispatcher.Instance.Dispatch(EventConstants.ON_LEVEL_STARTED, levelData);
+            gameHandler.OnLevelStarted(levelData);
         }
 
         public void OnPlayAgainClicked()

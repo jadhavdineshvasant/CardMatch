@@ -12,7 +12,6 @@ namespace CyberSpeed.Utils
     public static class EventConstants
     {
         public const string ON_GAME_OVER = "ON_GAME_OVER";
-        public const string ON_LEVEL_STARTED = "ON_LEVEL_STARTED";
         public const string ON_SCORE_UPDATED = "ON_SCORE_UPDATED";
     }
 }

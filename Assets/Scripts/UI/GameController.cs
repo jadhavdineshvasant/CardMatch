@@ -30,17 +30,7 @@ namespace CyberSpeed.UI
             gridLayoutGroup = cardGrid.GetComponent<GridLayoutGroup>();
         }
 
-        private void OnEnable()
-        {
-            EventDispatcher.Instance.Subscribe<DifficultyLevelData>(EventConstants.ON_LEVEL_STARTED, OnLevelStarted);
-        }
-
-        private void OnDisable()
-        {
-            EventDispatcher.Instance.Unsubscribe<DifficultyLevelData>(EventConstants.ON_LEVEL_STARTED, OnLevelStarted);
-        }
-
-        private void OnLevelStarted(DifficultyLevelData levelData)
+        public void OnLevelStarted(DifficultyLevelData levelData)
         {
             root.gameObject.SetActive(true);
 

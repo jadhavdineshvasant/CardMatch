@@ -167,10 +167,10 @@ namespace CyberSpeed.Manager
                 GameTime = Time.time - gameStartTime,
                 TotalTurns = totalTurns,
                 TotalMatches = totalMatches,
-                TotalComboStreaks = bestComboStreak,
+                TotalComboStreaks = (streak - 1) < 0 ? 0 : streak - 1,
                 TotalScore = totalScore
             };
-
+            GameManager.Instance.ShowResultScreenUI();
             EventDispatcher.Instance.Dispatch(EventConstants.ON_GAME_OVER, finalScoreData);
             Debug.Log($"Game Complete! Final Score: {totalScore}, Time: {finalScoreData.GameTime:F2}s");
         }
