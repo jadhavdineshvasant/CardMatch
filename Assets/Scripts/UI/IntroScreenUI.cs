@@ -4,23 +4,26 @@ using CyberSpeed.Manager;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class IntroScreenUI : MonoBehaviour
+namespace CyberSpeed.UI
 {
-    [Header("UI References")]
-    [SerializeField] private Button playButton;
-
-    private void OnEnable()
+    public class IntroScreenUI : MonoBehaviour
     {
-        playButton.onClick.AddListener(OnPlayButtonClicked);
-    }
+        [Header("UI References")]
+        [SerializeField] private Button playButton;
 
-    private void OnDisable()
-    {
-        playButton.onClick.RemoveListener(OnPlayButtonClicked);
-    }
+        private void OnEnable()
+        {
+            playButton.onClick.AddListener(OnPlayButtonClicked);
+        }
 
-    public void OnPlayButtonClicked()
-    {
-        GameManager.Instance.OnIntroPlayClicked();
+        private void OnDisable()
+        {
+            playButton.onClick.RemoveListener(OnPlayButtonClicked);
+        }
+
+        public void OnPlayButtonClicked()
+        {
+            GameManager.Instance.OnIntroPlayClicked();
+        }
     }
 }

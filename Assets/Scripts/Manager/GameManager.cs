@@ -18,6 +18,7 @@ namespace CyberSpeed.Manager
         [Header("UI Screens")]
         [SerializeField] private LevelSelectUI levelSelectUIHandler;
         [SerializeField] private IntroScreenUI introUIHandler;
+        [SerializeField] private ResultScreenUI resultScreenUIHandler;
 
         DifficultyLevelData selectedLevel;
 
@@ -34,8 +35,8 @@ namespace CyberSpeed.Manager
 
         void InitGame()
         {
+            HideAllScreens();
             ShowIntroUI();
-            HideLevelSelectUI();
         }
 
         public void OnIntroPlayClicked()
@@ -43,6 +44,18 @@ namespace CyberSpeed.Manager
             HideIntroUI();
             ShowLevelSelectUI();
         }
+
+        #region Result Screen Show/Hide
+        public void ShowResultScreenUI()
+        {
+            resultScreenUIHandler.gameObject.SetActive(true);
+        }
+
+        public void HideResultScreenUI()
+        {
+            resultScreenUIHandler.gameObject.SetActive(false);
+        }
+        #endregion
 
         #region Intro Screen Show/Hide
         public void ShowIntroUI()
@@ -74,5 +87,29 @@ namespace CyberSpeed.Manager
             Debug.Log($"level clicked {levelData.levelName}");
             selectedLevel = levelData;
         }
+
+        public void OnPlayAgainClicked()
+        {
+            HideAllScreens();
+            ShowLevelSelectUI();
+        }
+
+        public void OnHomeClicked()
+        {
+            HideAllScreens();
+            ShowIntroUI();
+        }
+
+        private void HideAllScreens()
+        {
+            levelSelectUIHandler.gameObject.SetActive(false);
+            introUIHandler.gameObject.SetActive(false);
+            resultScreenUIHandler.gameObject.SetActive(false);
+        }
+
+        // public void OnGameOver(ScoreData scoreData)
+        // {
+        //     ShowResultScreenUI();
+        // }
     }
 }

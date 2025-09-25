@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using CyberSpeed.Manager;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.UI;
 using CyberSpeed.SO;
 using System;
@@ -13,7 +13,17 @@ namespace CyberSpeed.UI
     {
         [SerializeField] private GameObject levelTilePrefab;
         [SerializeField] private Transform levelTileContainer;
-        // [SerializeField] private DifficultyLevelSO difficultyLevelSO;
+        [SerializeField] private Button homeBtn;
+
+        private void OnEnable()
+        {
+            homeBtn.onClick.AddListener(OnHomeButtonClicked);
+        }
+
+        private void OnDisable()
+        {
+            homeBtn.onClick.RemoveListener(OnHomeButtonClicked);
+        }
 
         public void InitLevels(DifficultyLevelSO difficultyLevelSO, Action<DifficultyLevelData> onLevelClicked)
         {
@@ -32,6 +42,11 @@ namespace CyberSpeed.UI
         {
             var levelTile = Instantiate(levelTilePrefab, levelTileContainer);
             levelTile.GetComponent<LevelTile>().Init(levelData, onLevelClicked);
+        }
+
+        private void OnHomeButtonClicked()
+        {
+            GameManager.Instance.OnHomeClicked();
         }
     }
 }
