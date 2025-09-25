@@ -26,7 +26,7 @@ namespace CyberSpeed.UI
             levelTitle.text = $"{levelData.rowsCount} x {levelData.colsCount}";
             levelName.text = levelData.levelName;
             levelName.color = levelData.titleColor;
-            scoreMultiplier.text = $"Match x {levelData.scoreMultiplier}";
+            scoreMultiplier.text = $"( +{levelData.scoreMultiplier} per match )";
 
             Button btn = this.GetComponent<Button>();
             if (btn == null) this.AddComponent<Button>();

@@ -19,6 +19,8 @@ namespace CyberSpeed.Manager
         [SerializeField] private LevelSelectUI levelSelectUIHandler;
         [SerializeField] private IntroScreenUI introUIHandler;
 
+        DifficultyLevelData selectedLevel;
+
         void Awake()
         {
             if (Instance == null) Instance = this;
@@ -70,6 +72,7 @@ namespace CyberSpeed.Manager
         private void OnLevelClicked(DifficultyLevelData levelData)
         {
             Debug.Log($"level clicked {levelData.levelName}");
+            selectedLevel = levelData;
         }
     }
 }
