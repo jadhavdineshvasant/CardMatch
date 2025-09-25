@@ -119,34 +119,6 @@ namespace CyberSpeed.Manager
         //     ShowResultScreenUI();
         // }
 
-        void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                SpawnCard(new Vector3(0, 0, 0));
-            }
-
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                // HideCard();
-                for (int i = 0; i < 20; i++)
-                {
-                    SpawnCard(new Vector3(0, 0, 0));
-                }
-            }
-        }
-
-        void SpawnCard(Vector3 position)
-        {
-            GameObject card = cardPool.Get();
-            card.transform.position = position;
-        }
-
-        void HideCard(GameObject card)
-        {
-            cardPool.Release(card);
-        }
-
         public CardSO GetCardData()
         {
             return cardSO;

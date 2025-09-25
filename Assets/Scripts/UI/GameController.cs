@@ -170,35 +170,43 @@ namespace CyberSpeed.UI
             Debug.Log("Preview complete - gameplay started");
         }
 
-        private List<int> openCardIds = new List<int>();
+        private GameCard openCard = null;
 
         private void CardClicked(GameCard gameCard)
         {
             // Prevent interaction during preview mode
             if (isPreviewMode) return;
 
-            int clickedCardID = gameCard.CardID;
+            if (openCard == null)
+            {
+                openCard = gameCard;
+                return;
+            }
 
-            bool isMatch = openCardIds.Contains(clickedCardID);
+            StartCoroutine(CheckForMatch(gameCard));
+        }
+
+        IEnumerator CheckForMatch(GameCard gameCard)
+        {
+            int clickedCardID = gameCard.CardID;
+            bool isMatch = openCard.CardID == clickedCardID;
+
+            yield return new WaitForSeconds(0.75f);
 
             if (isMatch)
             {
-                //this is double card opened
-                Debug.Log("yes it is matched");
-                openCardIds.Remove(clickedCardID);
+                Debug.Log("yes , it's matched");
+                openCard.Matched();
+                gameCard.Matched();
             }
             else
             {
-                //this is single card opened
-                openCardIds.Add(clickedCardID);
+                Debug.Log("no , it's not matched");
+                openCard.FlipToBack();
+                gameCard.FlipToBack();
             }
 
-            // if (openCardIds.Count == 2)
-            // {
-            //     Debug.Log("Match found");
-            //     gameCard.Matched();
-            //     openCardIds.Clear();
-            // }
+            openCard = null;
         }
     }
 }
