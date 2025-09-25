@@ -78,6 +78,8 @@ namespace CyberSpeed.Manager
             if (gameCard.IsFlipped && gameCard != openCard) return;
             if (gameCard == openCard) return;
 
+            AudioManager.Instance.PlayCardFlipSFX();
+
             if (openCard == null)
             {
                 openCard = gameCard;
@@ -120,6 +122,8 @@ namespace CyberSpeed.Manager
 
         private void ProcessSuccessfulMatch(GameCard gameCard)
         {
+            AudioManager.Instance.PlayCardMatchSuccessSFX();
+
             streak++;
             totalMatches++;
 
@@ -148,6 +152,8 @@ namespace CyberSpeed.Manager
 
         private void ProcessFailedMatch(GameCard gameCard)
         {
+            AudioManager.Instance.PlayCardMatchFailSFX();
+
             streak = 0;
             openCard.FlipToBack();
             gameCard.FlipToBack();
@@ -179,6 +185,7 @@ namespace CyberSpeed.Manager
             if (matchedCards.Count == activeCards.Count)
             {
                 Debug.Log("WIN CONDITION MET! Starting game completion...");
+                AudioManager.Instance.PlayResultScreenSFX();
                 StartCoroutine(HandleGameComplete());
             }
         }

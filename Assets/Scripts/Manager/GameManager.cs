@@ -64,6 +64,7 @@ namespace CyberSpeed.Manager
         #region Intro Screen Show/Hide
         public void ShowIntroUI()
         {
+            AudioManager.Instance.PlayBGMusic();
             introUIHandler.gameObject.SetActive(true);
         }
 

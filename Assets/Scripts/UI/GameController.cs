@@ -24,6 +24,8 @@ namespace CyberSpeed.UI
         [SerializeField] private Image memoriseMsgBar;
         [SerializeField] private TextMeshProUGUI gameTimer;
 
+        [SerializeField] Button homeBtn;
+
         private GridLayoutGroup gridLayoutGroup;
         private List<GameCard> activeCards = new List<GameCard>();
         private bool isPreviewMode = false;
@@ -39,11 +41,13 @@ namespace CyberSpeed.UI
         private void OnEnable()
         {
             EventDispatcher.Instance.Subscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
+            homeBtn.onClick.AddListener(OnHomeButtonClicked);
         }
 
         private void OnDisable()
         {
             EventDispatcher.Instance.Unsubscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
+            homeBtn.onClick.RemoveListener(OnHomeButtonClicked);
         }
 
         private void OnGameOver(ScoreData scoreData)
@@ -53,6 +57,9 @@ namespace CyberSpeed.UI
 
         public void OnLevelStarted(DifficultyLevelData levelData)
         {
+            AudioManager.Instance.StopBGMusic();
+            AudioManager.Instance.PlayGameStartSFX();
+
             root.gameObject.SetActive(true);
 
             if (!levelData.ValidateLevelData()) return;
@@ -223,6 +230,12 @@ namespace CyberSpeed.UI
 
             // Reset preview mode
             isPreviewMode = false;
+        }
+
+        private void OnHomeButtonClicked()
+        {
+            CleanupGameplayScreen();
+            GameManager.Instance.OnHomeClicked();
         }
     }
 }

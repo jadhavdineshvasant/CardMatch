@@ -105,8 +105,6 @@ namespace CyberSpeed.UI
 
         public void FlipToFront(bool animate = true)
         {
-            Debug.Log(isFlipped);
-
             if (isFlipped)
                 return;
 
