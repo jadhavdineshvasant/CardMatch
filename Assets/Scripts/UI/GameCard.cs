@@ -62,6 +62,21 @@ namespace CyberSpeed.UI
             IsInteractable = false;
         }
 
+        public void SetInteractable(bool interactable)
+        {
+            isInteractable = interactable;
+        }
+
+        public void EnableInteraction()
+        {
+            isInteractable = true;
+        }
+
+        public void DisableInteraction()
+        {
+            isInteractable = false;
+        }
+
         public void OnPointerClick(PointerEventData eventData)
         {
             if (!isInteractable || isAnimating)

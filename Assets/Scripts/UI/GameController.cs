@@ -14,9 +14,15 @@ namespace CyberSpeed.UI
     {
         [SerializeField] private GameObject root;
         [SerializeField] private GameGrid cardGrid;
+        [SerializeField] private GameObject memoriseMSG;
+        [SerializeField] private Image memoriseMsgBar;
 
         // Cached components for performance
         private GridLayoutGroup gridLayoutGroup;
+
+        // Game state
+        private List<GameCard> activeCards = new List<GameCard>();
+        private bool isPreviewMode = false;
 
         void Awake()
         {
@@ -47,6 +53,9 @@ namespace CyberSpeed.UI
 
             List<int> shuffledCardIDs = GenerateShuffledCardPairs(totalGridElements);
             SpawnCards(shuffledCardIDs);
+
+            // Start preview mode
+            StartCoroutine(PreviewGrid(levelData.previewDuration));
         }
 
         private void SetupGridLayout(int columnCount)
@@ -77,6 +86,9 @@ namespace CyberSpeed.UI
 
         private void SpawnCards(List<int> cardIDs)
         {
+            // Clear previous cards
+            activeCards.Clear();
+
             GameManager gameManager = GameManager.Instance;
             CardSO cardData = gameManager.GetCardData();
             var objPool = gameManager.GetObjectPool();
@@ -93,12 +105,78 @@ namespace CyberSpeed.UI
                 // Initialize card with cached component reference
                 var gameCard = cardObj.GetComponent<GameCard>();
                 gameCard.InitCard(cardInfo.cardID, cardInfo.cardSprite, CardClicked);
+
+                // Add to active cards list for preview control
+                activeCards.Add(gameCard);
             }
         }
 
-        List<int> openCardIds = new List<int>();
+        private IEnumerator PreviewGrid(float previewDuration)
+        {
+            // Show memorize message and initialize fillbar
+            memoriseMSG.SetActive(true);
+            memoriseMsgBar.fillAmount = 1f;
+
+            // Brief delay before starting preview
+            yield return new WaitForSeconds(0.25f);
+
+            isPreviewMode = true;
+            Debug.Log($"Starting card preview for {previewDuration} seconds");
+
+            // Show all cards face up with animation and disable interaction
+            foreach (var card in activeCards)
+            {
+                card.FlipToFront(animate: true);
+                card.DisableInteraction();
+            }
+
+            // Wait for card flip animations to complete
+            yield return new WaitForSeconds(0.5f);
+
+            // Preview countdown with fillbar
+            float timer = previewDuration;
+            while (timer > 0)
+            {
+                timer -= Time.deltaTime;
+                // Update fillbar (inverted so it empties as time runs out)
+                memoriseMsgBar.fillAmount = timer / previewDuration;
+                yield return null;
+            }
+
+            // Ensure fillbar is empty at the end
+            memoriseMsgBar.fillAmount = 0f;
+
+            Debug.Log("Preview time up - hiding cards");
+
+            // Flip all cards back face down with animation
+            foreach (var card in activeCards)
+            {
+                card.FlipToBack(animate: true);
+            }
+
+            // Wait for flip animations to complete before enabling interaction
+            yield return new WaitForSeconds(0.5f);
+
+            // Enable interaction for gameplay
+            foreach (var card in activeCards)
+            {
+                card.EnableInteraction();
+            }
+
+            // Hide memorize message
+            memoriseMSG.SetActive(false);
+
+            isPreviewMode = false;
+            Debug.Log("Preview complete - gameplay started");
+        }
+
+        private List<int> openCardIds = new List<int>();
+
         private void CardClicked(GameCard gameCard)
         {
+            // Prevent interaction during preview mode
+            if (isPreviewMode) return;
+
             int clickedCardID = gameCard.CardID;
 
             bool isMatch = openCardIds.Contains(clickedCardID);
