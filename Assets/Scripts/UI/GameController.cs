@@ -22,7 +22,9 @@ namespace CyberSpeed.UI
 
         // Game state
         private List<GameCard> activeCards = new List<GameCard>();
+        private List<GameCard> matchedCards = new List<GameCard>();
         private bool isPreviewMode = false;
+        private bool isMatchingInProgress = false;
 
         void Awake()
         {
@@ -48,6 +50,9 @@ namespace CyberSpeed.UI
 
             if (!levelData.ValidateLevelData()) return;
 
+            // Reset game state
+            ResetGameState();
+
             SetupGridLayout(levelData.colsCount);
             int totalGridElements = levelData.rowsCount * levelData.colsCount;
 
@@ -56,6 +61,23 @@ namespace CyberSpeed.UI
 
             // Start preview mode
             StartCoroutine(PreviewGrid(levelData.previewDuration));
+        }
+
+        private void ResetGameState()
+        {
+            // Stop any ongoing coroutines
+            StopAllCoroutines();
+
+            // Reset game state variables
+            openCard = null;
+            isPreviewMode = false;
+            isMatchingInProgress = false;
+            matchedCards.Clear();
+
+            // Hide memorize message if it's showing
+            memoriseMSG.SetActive(false);
+
+            Debug.Log("Game state reset for new level");
         }
 
         private void SetupGridLayout(int columnCount)
@@ -174,39 +196,87 @@ namespace CyberSpeed.UI
 
         private void CardClicked(GameCard gameCard)
         {
-            // Prevent interaction during preview mode
-            if (isPreviewMode) return;
+            // Prevent interaction during preview mode or while matching is in progress
+            if (isPreviewMode || isMatchingInProgress) return;
+
+            // Prevent clicking already flipped cards (matched cards or currently selected card)
+            if (gameCard.IsFlipped && gameCard != openCard) return;
+
+            // Prevent clicking the same card twice
+            if (gameCard == openCard) return;
 
             if (openCard == null)
             {
+                // First card selected
                 openCard = gameCard;
+                Debug.Log($"First card selected: ID {gameCard.CardID}");
                 return;
             }
 
+            // Second card selected - start match checking
+            Debug.Log($"Second card selected: ID {gameCard.CardID}");
             StartCoroutine(CheckForMatch(gameCard));
         }
 
         IEnumerator CheckForMatch(GameCard gameCard)
         {
+            // Set matching in progress and disable all card interactions
+            isMatchingInProgress = true;
+            SetAllCardsInteractable(false);
+
             int clickedCardID = gameCard.CardID;
             bool isMatch = openCard.CardID == clickedCardID;
 
+            Debug.Log($"Checking match: Card1 ID={openCard.CardID}, Card2 ID={clickedCardID}");
+
+            // Give player time to see both cards
             yield return new WaitForSeconds(0.75f);
 
             if (isMatch)
             {
-                Debug.Log("yes , it's matched");
+                Debug.Log("Match found!");
                 openCard.Matched();
                 gameCard.Matched();
+
+                // Track matched cards
+                matchedCards.Add(openCard);
+                matchedCards.Add(gameCard);
+
+                // TODO: Add score, check for win condition, etc.
             }
             else
             {
-                Debug.Log("no , it's not matched");
+                Debug.Log("No match - flipping cards back");
                 openCard.FlipToBack();
                 gameCard.FlipToBack();
             }
 
+            // Reset state for next turn
             openCard = null;
+            isMatchingInProgress = false;
+
+            // Re-enable interaction for all non-matched cards
+            SetAllCardsInteractable(true);
+        }
+
+        private void SetAllCardsInteractable(bool interactable)
+        {
+            foreach (var card in activeCards)
+            {
+                if (interactable)
+                {
+                    // When enabling, only enable non-matched cards
+                    if (!matchedCards.Contains(card))
+                    {
+                        card.SetInteractable(true);
+                    }
+                }
+                else
+                {
+                    // When disabling, disable ALL cards regardless of match status
+                    card.SetInteractable(false);
+                }
+            }
         }
     }
 }

@@ -79,7 +79,7 @@ namespace CyberSpeed.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (!isInteractable || isAnimating)
+            if (!isInteractable || isAnimating || isFlipped)
                 return;
 
             FlipCard();
