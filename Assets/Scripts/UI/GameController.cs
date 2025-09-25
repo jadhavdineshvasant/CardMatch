@@ -7,6 +7,7 @@ using CyberSpeed.SerialisedClasses;
 using CyberSpeed.SO;
 using DifficultyLevelData = CyberSpeed.SO.DifficultyLevelSO.DifficultyLevelData;
 using UnityEngine.UI;
+using TMPro;
 
 namespace CyberSpeed.UI
 {
@@ -16,6 +17,7 @@ namespace CyberSpeed.UI
         [SerializeField] private GameGrid cardGrid;
         [SerializeField] private GameObject memoriseMSG;
         [SerializeField] private Image memoriseMsgBar;
+        [SerializeField] private TextMeshProUGUI gameTimer;
 
         private GridLayoutGroup gridLayoutGroup;
         private List<GameCard> activeCards = new List<GameCard>();
@@ -256,12 +258,13 @@ namespace CyberSpeed.UI
             }
         }
 
-        public int GetNextMatchValue()
-        {
-            int baseScore = 100;
-            int nextStreakBonus = streak * 50; // What the bonus would be for the NEXT match
-            return baseScore + nextStreakBonus;
-        }
+        // this method can be utilised for displaying the next match value on streak
+        // public int GetNextMatchValue()
+        // {
+        //     int baseScore = 100;
+        //     int nextStreakBonus = streak * 50; // What the bonus would be for the NEXT match
+        //     return baseScore + nextStreakBonus;
+        // }
 
         private void DispatchScoreUpdate()
         {
