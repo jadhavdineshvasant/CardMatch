@@ -39,12 +39,31 @@ namespace CyberSpeed.Manager
             }
         }
 
+        private void OnEnable()
+        {
+            EventDispatcher.Instance.Subscribe(EventConstants.ON_GAME_CLEANUP, OnGameCleanup);
+        }
+
+        private void OnDisable()
+        {
+            EventDispatcher.Instance.Unsubscribe(EventConstants.ON_GAME_CLEANUP, OnGameCleanup);
+        }
+
+        private void OnGameCleanup()
+        {
+            // Reset all game state when cleanup is triggered
+            FullReset();
+        }
+
         public void InitializeGame(List<GameCard> cards)
         {
+            // Reset stats first, then set up the cards
+            ResetGameStats();
+
             activeCards = new List<GameCard>(cards);
             matchedCards.Clear();
 
-            ResetGameStats();
+            Debug.Log($"Game initialized with {activeCards.Count} cards");
         }
 
         public void StartGame()
@@ -119,6 +138,8 @@ namespace CyberSpeed.Manager
             matchedCards.Add(openCard);
             matchedCards.Add(gameCard);
 
+            Debug.Log($"Cards matched! Now have {matchedCards.Count} matched cards out of {activeCards.Count} total");
+
             DispatchScoreUpdate();
             CheckWinCondition();
         }
@@ -151,8 +172,11 @@ namespace CyberSpeed.Manager
 
         private void CheckWinCondition()
         {
+            Debug.Log($"Win Check: Matched Cards = {matchedCards.Count}, Active Cards = {activeCards.Count}");
+
             if (matchedCards.Count == activeCards.Count)
             {
+                Debug.Log("WIN CONDITION MET! Starting game completion...");
                 StartCoroutine(HandleGameComplete());
             }
         }
@@ -170,8 +194,9 @@ namespace CyberSpeed.Manager
                 TotalComboStreaks = (streak - 1) < 0 ? 0 : streak - 1,
                 TotalScore = totalScore
             };
+
             GameManager.Instance.ShowResultScreenUI();
-            EventDispatcher.Instance.Dispatch(EventConstants.ON_GAME_OVER, finalScoreData);
+            EventDispatcher.Instance.Dispatch(EventConstants.ON_GAME_RESULT, finalScoreData);
             Debug.Log($"Game Complete! Final Score: {totalScore}, Time: {finalScoreData.GameTime:F2}s");
         }
 
@@ -185,6 +210,15 @@ namespace CyberSpeed.Manager
             totalTurns = 0;
             totalMatches = 0;
             bestComboStreak = 0;
+        }
+
+        private void FullReset()
+        {
+            ResetGameStats();
+
+            // Clear card tracking lists completely
+            activeCards.Clear();
+            matchedCards.Clear();
         }
 
         private void DispatchScoreUpdate()

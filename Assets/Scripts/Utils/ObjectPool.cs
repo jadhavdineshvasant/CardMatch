@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CyberSpeed.UI;
 
 namespace CyberSpeed.Utils
 {
@@ -45,6 +46,19 @@ namespace CyberSpeed.Utils
         /// </summary>
         public void Release(GameObject obj)
         {
+            // Reset GameCard component if present
+            var gameCard = obj.GetComponent<GameCard>();
+            if (gameCard != null)
+            {
+                gameCard.ResetCard();
+            }
+
+            // Reset transform parent and position
+            obj.transform.SetParent(parent);
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
+            obj.transform.localScale = Vector3.one;
+
             obj.SetActive(false);
             pool.Enqueue(obj);
         }

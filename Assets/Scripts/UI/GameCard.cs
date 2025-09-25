@@ -30,7 +30,7 @@ namespace CyberSpeed.UI
         private bool isInteractable = true;
 
         public static event Action<GameCard> OnCardFlipped;
-        public static event Action<GameCard> OnCardClicked;
+        private Action<GameCard> onCardClickedCallback;
 
         public int CardID { get { return cardID; } private set { cardID = value; } }
         public bool IsFlipped { get { return isFlipped; } private set { isFlipped = value; } }
@@ -40,7 +40,7 @@ namespace CyberSpeed.UI
 
         public void InitCard(int cardID, Sprite frontSprite, Action<GameCard> cardClicked)
         {
-            OnCardClicked = cardClicked;
+            onCardClickedCallback = cardClicked;
             this.cardID = cardID;
             this.cardSprite = frontSprite;
 
@@ -80,7 +80,7 @@ namespace CyberSpeed.UI
                 return;
 
             FlipCard();
-            OnCardClicked?.Invoke(this);
+            onCardClickedCallback?.Invoke(this);
         }
 
         public void FlipCard()
@@ -182,8 +182,20 @@ namespace CyberSpeed.UI
             StopAllCoroutines();
             isFlipped = false;
             isAnimating = false;
+            isInteractable = true; // Reset interactable state
             transform.localScale = Vector3.one;
             SetCardVisuals(false);
+
+            // Clear any previous card data
+            cardID = 0;
+            cardSprite = null;
+            onCardClickedCallback = null;
+
+            // Reset front image
+            if (front != null)
+            {
+                front.sprite = null;
+            }
         }
 
         // Method to match cards by ID (useful for memory game logic)

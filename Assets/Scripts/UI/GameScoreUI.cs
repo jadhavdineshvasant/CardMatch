@@ -18,11 +18,13 @@ namespace CyberSpeed.UI
         private void OnEnable()
         {
             EventDispatcher.Instance.Subscribe<ScoreData>(EventConstants.ON_SCORE_UPDATED, OnScoreUpdated);
+            EventDispatcher.Instance.Subscribe(EventConstants.ON_GAME_CLEANUP, OnGameCleanup);
         }
 
         private void OnDisable()
         {
             EventDispatcher.Instance.Unsubscribe<ScoreData>(EventConstants.ON_SCORE_UPDATED, OnScoreUpdated);
+            EventDispatcher.Instance.Unsubscribe(EventConstants.ON_GAME_CLEANUP, OnGameCleanup);
         }
 
         private void OnScoreUpdated(ScoreData scoreData)
@@ -31,6 +33,15 @@ namespace CyberSpeed.UI
             matchTxt.text = $"Matches: {scoreData.TotalMatches}";
             streakTxt.text = $"Streaks: {scoreData.TotalComboStreaks}";
             scoreTxt.text = $"Score: {scoreData.TotalScore}";
+        }
+
+        private void OnGameCleanup()
+        {
+            // Reset all score display to initial state
+            turnTxt.text = "Turns: 0";
+            matchTxt.text = "Matches: 0";
+            streakTxt.text = "Streaks: 0";
+            scoreTxt.text = "Score: 0";
         }
     }
 }

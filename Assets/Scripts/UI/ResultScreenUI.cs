@@ -22,14 +22,14 @@ namespace CyberSpeed.UI
 
         private void OnEnable()
         {
-            EventDispatcher.Instance.Subscribe<ScoreData>(EventConstants.ON_GAME_OVER, OnGameOver);
+            EventDispatcher.Instance.Subscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
             playAgainBtn.onClick.AddListener(OnPlayAgainButtonClicked);
             homeBtn.onClick.AddListener(OnHomeButtonClicked);
         }
 
         private void OnDisable()
         {
-            EventDispatcher.Instance.Unsubscribe<ScoreData>(EventConstants.ON_GAME_OVER, OnGameOver);
+            EventDispatcher.Instance.Unsubscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
             playAgainBtn.onClick.RemoveListener(OnPlayAgainButtonClicked);
             homeBtn.onClick.RemoveListener(OnHomeButtonClicked);
         }

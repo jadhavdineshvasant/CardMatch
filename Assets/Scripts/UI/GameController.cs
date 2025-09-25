@@ -30,6 +30,21 @@ namespace CyberSpeed.UI
             gridLayoutGroup = cardGrid.GetComponent<GridLayoutGroup>();
         }
 
+        private void OnEnable()
+        {
+            EventDispatcher.Instance.Subscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
+        }
+
+        private void OnDisable()
+        {
+            EventDispatcher.Instance.Unsubscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
+        }
+
+        private void OnGameOver(ScoreData scoreData)
+        {
+            CleanupGameplayScreen();
+        }
+
         public void OnLevelStarted(DifficultyLevelData levelData)
         {
             root.gameObject.SetActive(true);
@@ -155,6 +170,53 @@ namespace CyberSpeed.UI
                 gameTimer.text = $"{minutes:00}:{seconds:00}";
                 yield return new WaitForSeconds(1f);
             }
+        }
+
+        public void CleanupGameplayScreen()
+        {
+            // Stop all running coroutines
+            StopAllCoroutines();
+
+            // Hide the main gameplay screen
+            root.gameObject.SetActive(false);
+
+            // Clear grid content
+            ClearGrid();
+
+            // Reset UI elements
+            ResetUIElements();
+
+            // Clear active cards list
+            activeCards.Clear();
+
+            // Notify other UI components to cleanup
+            EventDispatcher.Instance.Dispatch(EventConstants.ON_GAME_CLEANUP);
+        }
+
+        private void ClearGrid()
+        {
+            // Return all cards to object pool and clear grid
+            var objPool = GameManager.Instance.GetObjectPool();
+            Transform gridTransform = cardGrid.transform;
+
+            for (int i = gridTransform.childCount - 1; i >= 0; i--)
+            {
+                var child = gridTransform.GetChild(i);
+                objPool.Release(child.gameObject);
+            }
+        }
+
+        private void ResetUIElements()
+        {
+            // Reset timer display
+            gameTimer.text = "00:00";
+
+            // Hide memorize message if showing
+            memoriseMSG.SetActive(false);
+            memoriseMsgBar.fillAmount = 0f;
+
+            // Reset preview mode
+            isPreviewMode = false;
         }
     }
 }
