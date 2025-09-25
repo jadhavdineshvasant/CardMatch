@@ -21,9 +21,8 @@ namespace CyberSpeed.UI
 
         private GridLayoutGroup gridLayoutGroup;
         private List<GameCard> activeCards = new List<GameCard>();
-        private List<GameCard> matchedCards = new List<GameCard>();
         private bool isPreviewMode = false;
-        private bool isMatchingInProgress = false;
+        private float gameStartTime = 0f;
 
         void Awake()
         {
@@ -47,31 +46,24 @@ namespace CyberSpeed.UI
 
             if (!levelData.ValidateLevelData()) return;
 
-            ResetGameState();
+            ResetUIState();
             SetupGridLayout(levelData.colsCount);
             int totalGridElements = levelData.rowsCount * levelData.colsCount;
 
             List<int> shuffledCardIDs = GenerateShuffledCardPairs(totalGridElements);
             SpawnCards(shuffledCardIDs);
+
+            // Initialize the match manager with the spawned cards
+            MatchManager.Instance.InitializeGame(activeCards);
+
             StartCoroutine(PreviewGrid(levelData.previewDuration));
         }
 
-        private void ResetGameState()
+        private void ResetUIState()
         {
             StopAllCoroutines();
-
-            openCard = null;
             isPreviewMode = false;
-            isMatchingInProgress = false;
-            matchedCards.Clear();
-
-            streak = 0;
-            totalScore = 0;
-            totalTurns = 0;
-            totalMatches = 0;
-            bestComboStreak = 0;
             gameStartTime = Time.time;
-
             memoriseMSG.SetActive(false);
         }
 
@@ -112,7 +104,7 @@ namespace CyberSpeed.UI
                 cardObj.transform.SetParent(gridTransform, false);
 
                 var gameCard = cardObj.GetComponent<GameCard>();
-                gameCard.InitCard(cardInfo.cardID, cardInfo.cardSprite, CardClicked);
+                gameCard.InitCard(cardInfo.cardID, cardInfo.cardSprite, MatchManager.Instance.HandleCardClick);
                 activeCards.Add(gameCard);
             }
         }
@@ -157,111 +149,15 @@ namespace CyberSpeed.UI
 
             memoriseMSG.SetActive(false);
             isPreviewMode = false;
-            DispatchScoreUpdate();
+
+            // Start the match manager game and timer
+            MatchManager.Instance.StartGame();
             StartCoroutine(UpdateGameTimer());
-        }
-
-        private GameCard openCard = null;
-        private int streak = 0;
-        private int totalScore = 0;
-        private int totalTurns = 0;
-        private int totalMatches = 0;
-        private int bestComboStreak = 0;
-        private float gameStartTime = 0f;
-
-        public int CurrentStreak => streak;
-        public int TotalScore => totalScore;
-
-        private void CardClicked(GameCard gameCard)
-        {
-            if (isPreviewMode || isMatchingInProgress) return;
-            if (gameCard.IsFlipped && gameCard != openCard) return;
-            if (gameCard == openCard) return;
-
-            if (openCard == null)
-            {
-                openCard = gameCard;
-                Debug.Log($"First card selected: ID {gameCard.CardID}");
-                return;
-            }
-
-            // Second card selected - start match checking
-            Debug.Log($"Second card selected: ID {gameCard.CardID}");
-            StartCoroutine(CheckForMatch(gameCard));
-        }
-
-        IEnumerator CheckForMatch(GameCard gameCard)
-        {
-            isMatchingInProgress = true;
-            SetAllCardsInteractable(false);
-            totalTurns++;
-
-            int clickedCardID = gameCard.CardID;
-            bool isMatch = openCard.CardID == clickedCardID;
-
-            Debug.Log($"Checking match: Card1 ID={openCard.CardID}, Card2 ID={clickedCardID}");
-
-            yield return new WaitForSeconds(0.75f);
-
-            if (isMatch)
-            {
-                streak++;
-                totalMatches++;
-
-                if (streak > bestComboStreak)
-                {
-                    bestComboStreak = streak;
-                }
-
-                int baseScore = 100;
-                int streakBonus = (streak - 1) * 50; // +50 for each additional match in streak
-                int matchScore = baseScore + streakBonus;
-                totalScore += matchScore;
-
-                Debug.Log($"Match found! Streak: {streak} | Match Score: {matchScore} | Total Score: {totalScore}");
-
-                openCard.Matched();
-                gameCard.Matched();
-                matchedCards.Add(openCard);
-                matchedCards.Add(gameCard);
-                DispatchScoreUpdate();
-
-                CheckWinCondition();
-            }
-            else
-            {
-                streak = 0;
-                openCard.FlipToBack();
-                gameCard.FlipToBack();
-                DispatchScoreUpdate();
-            }
-
-            openCard = null;
-            isMatchingInProgress = false;
-            SetAllCardsInteractable(true);
-        }
-
-        private void SetAllCardsInteractable(bool interactable)
-        {
-            foreach (var card in activeCards)
-            {
-                if (interactable)
-                {
-                    if (!matchedCards.Contains(card))
-                    {
-                        card.SetInteractable(true);
-                    }
-                }
-                else
-                {
-                    card.SetInteractable(false);
-                }
-            }
         }
 
         private IEnumerator UpdateGameTimer()
         {
-            while (matchedCards.Count < activeCards.Count && !isPreviewMode)
+            while (!MatchManager.Instance.IsMatchingInProgress && !isPreviewMode)
             {
                 float currentTime = Time.time - gameStartTime;
                 int minutes = Mathf.FloorToInt(currentTime / 60);
@@ -269,55 +165,6 @@ namespace CyberSpeed.UI
                 gameTimer.text = $"{minutes:00}:{seconds:00}";
                 yield return new WaitForSeconds(1f);
             }
-        }
-
-        private void CheckWinCondition()
-        {
-            if (matchedCards.Count == activeCards.Count)
-            {
-                StartCoroutine(HandleGameComplete());
-            }
-        }
-
-        private IEnumerator HandleGameComplete()
-        {
-            isMatchingInProgress = true;
-            yield return new WaitForSeconds(1f);
-
-            var finalScoreData = new ScoreData
-            {
-                GameTime = Time.time - gameStartTime,
-                TotalTurns = totalTurns,
-                TotalMatches = totalMatches,
-                TotalComboStreaks = bestComboStreak,
-                TotalScore = totalScore
-            };
-
-            EventDispatcher.Instance.Dispatch(EventConstants.ON_GAME_OVER, finalScoreData);
-            Debug.Log($"Game Complete! Final Score: {totalScore}, Time: {finalScoreData.GameTime:F2}s");
-        }
-
-        // this method can be utilised for displaying the next match value on streak
-        // public int GetNextMatchValue()
-        // {
-        //     int baseScore = 100;
-        //     int nextStreakBonus = streak * 50; // What the bonus would be for the NEXT match
-        //     return baseScore + nextStreakBonus;
-        // }
-
-        private void DispatchScoreUpdate()
-        {
-            var scoreData = new ScoreData
-            {
-                GameTime = Time.time - gameStartTime,
-                TotalTurns = totalTurns,
-                TotalMatches = totalMatches,
-                TotalComboStreaks = (streak - 1) < 0 ? 0 : streak - 1,
-                TotalScore = totalScore
-            };
-
-            EventDispatcher.Instance.Dispatch(EventConstants.ON_SCORE_UPDATED, scoreData);
-            Debug.Log($"Score updated: Turns: {totalTurns}, Matches: {totalMatches}, Current Streak: {streak}, Best Streak: {bestComboStreak}, Score: {totalScore}");
         }
     }
 }

@@ -1,18 +1,205 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CyberSpeed.Utils;
+using CyberSpeed.SerialisedClasses;
+using CyberSpeed.UI;
 
-public class MatchManager : MonoBehaviour
+namespace CyberSpeed.Manager
 {
-    // Start is called before the first frame update
-    void Start()
+    public class MatchManager : MonoBehaviour
     {
-        
-    }
+        public static MatchManager Instance { get; private set; }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private GameCard openCard = null;
+        private List<GameCard> activeCards = new List<GameCard>();
+        private List<GameCard> matchedCards = new List<GameCard>();
+        private bool isMatchingInProgress = false;
+
+        private int streak = 0;
+        private int totalScore = 0;
+        private int totalTurns = 0;
+        private int totalMatches = 0;
+        private int bestComboStreak = 0;
+        private float gameStartTime = 0f;
+
+        public int CurrentStreak => streak;
+        public int TotalScore => totalScore;
+        public bool IsMatchingInProgress => isMatchingInProgress;
+
+        void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        public void InitializeGame(List<GameCard> cards)
+        {
+            activeCards = new List<GameCard>(cards);
+            matchedCards.Clear();
+
+            ResetGameStats();
+        }
+
+        public void StartGame()
+        {
+            gameStartTime = Time.time;
+            DispatchScoreUpdate();
+        }
+
+        public void HandleCardClick(GameCard gameCard)
+        {
+            if (isMatchingInProgress) return;
+            if (gameCard.IsFlipped && gameCard != openCard) return;
+            if (gameCard == openCard) return;
+
+            if (openCard == null)
+            {
+                openCard = gameCard;
+                Debug.Log($"First card selected: ID {gameCard.CardID}");
+                return;
+            }
+
+            Debug.Log($"Second card selected: ID {gameCard.CardID}");
+            StartCoroutine(ProcessMatch(gameCard));
+        }
+
+        private IEnumerator ProcessMatch(GameCard gameCard)
+        {
+            isMatchingInProgress = true;
+            SetAllCardsInteractable(false);
+            totalTurns++;
+
+            int clickedCardID = gameCard.CardID;
+            bool isMatch = openCard.CardID == clickedCardID;
+
+            Debug.Log($"Checking match: Card1 ID={openCard.CardID}, Card2 ID={clickedCardID}");
+
+            yield return new WaitForSeconds(0.75f);
+
+            if (isMatch)
+            {
+                ProcessSuccessfulMatch(gameCard);
+            }
+            else
+            {
+                ProcessFailedMatch(gameCard);
+            }
+
+            openCard = null;
+            isMatchingInProgress = false;
+            SetAllCardsInteractable(true);
+        }
+
+        private void ProcessSuccessfulMatch(GameCard gameCard)
+        {
+            streak++;
+            totalMatches++;
+
+            if (streak > bestComboStreak)
+            {
+                bestComboStreak = streak;
+            }
+
+            int baseScore = 100;
+            int streakBonus = (streak - 1) * 50;
+            int matchScore = baseScore + streakBonus;
+            totalScore += matchScore;
+
+            Debug.Log($"Match found! Streak: {streak} | Match Score: {matchScore} | Total Score: {totalScore}");
+
+            openCard.Matched();
+            gameCard.Matched();
+            matchedCards.Add(openCard);
+            matchedCards.Add(gameCard);
+
+            DispatchScoreUpdate();
+            CheckWinCondition();
+        }
+
+        private void ProcessFailedMatch(GameCard gameCard)
+        {
+            streak = 0;
+            openCard.FlipToBack();
+            gameCard.FlipToBack();
+            DispatchScoreUpdate();
+        }
+
+        private void SetAllCardsInteractable(bool interactable)
+        {
+            foreach (var card in activeCards)
+            {
+                if (interactable)
+                {
+                    if (!matchedCards.Contains(card))
+                    {
+                        card.SetInteractable(true);
+                    }
+                }
+                else
+                {
+                    card.SetInteractable(false);
+                }
+            }
+        }
+
+        private void CheckWinCondition()
+        {
+            if (matchedCards.Count == activeCards.Count)
+            {
+                StartCoroutine(HandleGameComplete());
+            }
+        }
+
+        private IEnumerator HandleGameComplete()
+        {
+            isMatchingInProgress = true;
+            yield return new WaitForSeconds(1f);
+
+            var finalScoreData = new ScoreData
+            {
+                GameTime = Time.time - gameStartTime,
+                TotalTurns = totalTurns,
+                TotalMatches = totalMatches,
+                TotalComboStreaks = bestComboStreak,
+                TotalScore = totalScore
+            };
+
+            EventDispatcher.Instance.Dispatch(EventConstants.ON_GAME_OVER, finalScoreData);
+            Debug.Log($"Game Complete! Final Score: {totalScore}, Time: {finalScoreData.GameTime:F2}s");
+        }
+
+        private void ResetGameStats()
+        {
+            openCard = null;
+            isMatchingInProgress = false;
+
+            streak = 0;
+            totalScore = 0;
+            totalTurns = 0;
+            totalMatches = 0;
+            bestComboStreak = 0;
+        }
+
+        private void DispatchScoreUpdate()
+        {
+            var scoreData = new ScoreData
+            {
+                GameTime = Time.time - gameStartTime,
+                TotalTurns = totalTurns,
+                TotalMatches = totalMatches,
+                TotalComboStreaks = (streak - 1) < 0 ? 0 : streak - 1,
+                TotalScore = totalScore
+            };
+
+            EventDispatcher.Instance.Dispatch(EventConstants.ON_SCORE_UPDATED, scoreData);
+            Debug.Log($"Score updated: Turns: {totalTurns}, Matches: {totalMatches}, Current Streak: {streak}, Best Streak: {bestComboStreak}, Score: {totalScore}");
+        }
     }
 }
