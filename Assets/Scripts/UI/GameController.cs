@@ -13,6 +13,11 @@ namespace CyberSpeed.UI
 {
     public class GameController : MonoBehaviour
     {
+        [Header("Object Pool References")]
+        [SerializeField] private ObjectPool cardPool;
+
+        [SerializeField] private GameObject cardPrefab;
+
         [SerializeField] private GameObject root;
         [SerializeField] private GameGrid cardGrid;
         [SerializeField] private GameObject memoriseMSG;
@@ -28,6 +33,7 @@ namespace CyberSpeed.UI
         {
             root.gameObject.SetActive(false);
             gridLayoutGroup = cardGrid.GetComponent<GridLayoutGroup>();
+            cardPool.InitializePool(cardPrefab);
         }
 
         private void OnEnable()
@@ -98,15 +104,16 @@ namespace CyberSpeed.UI
 
             GameManager gameManager = GameManager.Instance;
             CardSO cardData = gameManager.GetCardData();
-            var objPool = gameManager.GetObjectPool();
+
             Transform gridTransform = cardGrid.transform;
 
             for (int i = 0; i < cardIDs.Count; i++)
             {
                 var cardInfo = cardData.cardDataList[cardIDs[i]];
-                var cardObj = objPool.Get();
+                var cardObj = cardPool.GetObjectFromPool();
 
                 cardObj.transform.SetParent(gridTransform, false);
+                cardObj.gameObject.SetActive(true);
 
                 var gameCard = cardObj.GetComponent<GameCard>();
                 gameCard.InitCard(cardInfo.cardID, cardInfo.cardSprite, MatchManager.Instance.HandleCardClick);
@@ -196,13 +203,12 @@ namespace CyberSpeed.UI
         private void ClearGrid()
         {
             // Return all cards to object pool and clear grid
-            var objPool = GameManager.Instance.GetObjectPool();
             Transform gridTransform = cardGrid.transform;
 
             for (int i = gridTransform.childCount - 1; i >= 0; i--)
             {
                 var child = gridTransform.GetChild(i);
-                objPool.Release(child.gameObject);
+                cardPool.ReleaseAll();
             }
         }
 

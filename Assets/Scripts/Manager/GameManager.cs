@@ -16,9 +16,6 @@ namespace CyberSpeed.Manager
         [SerializeField] private DifficultyLevelSO difficultyLevelSO;
         [SerializeField] private CardSO cardSO;
 
-        [Header("Object Pool References")]
-        [SerializeField] private ObjectPool cardPool;
-
         [Header("UI Screens")]
         [SerializeField] private LevelSelectUI levelSelectUIHandler;
         [SerializeField] private IntroScreenUI introUIHandler;
@@ -128,11 +125,6 @@ namespace CyberSpeed.Manager
         public DifficultyLevelSO GetLevelData()
         {
             return difficultyLevelSO;
-        }
-
-        public ObjectPool GetObjectPool()
-        {
-            return cardPool;
         }
     }
 }

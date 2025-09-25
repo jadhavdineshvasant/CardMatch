@@ -40,6 +40,7 @@ namespace CyberSpeed.UI
 
         public void InitCard(int cardID, Sprite frontSprite, Action<GameCard> cardClicked)
         {
+            ResetCard();
             onCardClickedCallback = cardClicked;
             this.cardID = cardID;
             this.cardSprite = frontSprite;
@@ -93,6 +94,8 @@ namespace CyberSpeed.UI
 
         public void FlipToFront(bool animate = true)
         {
+            Debug.Log(isFlipped);
+
             if (isFlipped)
                 return;
 

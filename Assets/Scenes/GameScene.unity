@@ -690,6 +690,7 @@ GameObject:
   - component: {fileID: 129227890}
   - component: {fileID: 129227892}
   - component: {fileID: 129227891}
+  - component: {fileID: 129227893}
   m_Layer: 5
   m_Name: GameGrid
   m_TagString: Untagged
@@ -753,6 +754,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76a8d01e0462148b1803a30a5072aa8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardPrefab: {fileID: 0}
+--- !u!114 &129227893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129227889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a00bc690e37f41c0bbecc6359d472a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mWillGrowPool: 1
 --- !u!1 &171999102
 GameObject:
   m_ObjectHideFlags: 0
@@ -2776,54 +2791,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 684291904}
   m_CullTransparentMesh: 1
---- !u!1 &692475847
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 692475848}
-  - component: {fileID: 692475849}
-  m_Layer: 0
-  m_Name: ObjectPool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &692475848
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692475847}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &692475849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692475847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a00bc690e37f41c0bbecc6359d472a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefab: {fileID: 8146247457813802246, guid: 908eb4058c6d1462e8892ec5aa440ad3, type: 3}
-  initialSize: 10
-  allowGrowth: 1
-  parent: {fileID: 129227890}
 --- !u!1 &754965628
 GameObject:
   m_ObjectHideFlags: 0
@@ -5988,7 +5955,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyLevelSO: {fileID: 11400000, guid: 50176c3a945f94a99a3e8e8e01263dc4, type: 2}
   cardSO: {fileID: 11400000, guid: 7cb77209e4c5f416d9334875149915dd, type: 2}
-  cardPool: {fileID: 692475849}
   levelSelectUIHandler: {fileID: 240255776}
   introUIHandler: {fileID: 1029121468}
   resultScreenUIHandler: {fileID: 314562374}
@@ -6755,6 +6721,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47925a1f0e4b74b33b32db13227ec529, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardPool: {fileID: 129227893}
+  cardPrefab: {fileID: 8146247457813802246, guid: 908eb4058c6d1462e8892ec5aa440ad3, type: 3}
   root: {fileID: 467060019}
   cardGrid: {fileID: 129227892}
   memoriseMSG: {fileID: 1646497051}

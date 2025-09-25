@@ -7,60 +7,65 @@ namespace CyberSpeed.Utils
 {
     public class ObjectPool : MonoBehaviour
     {
-        [SerializeField] private GameObject prefab;
-        [SerializeField] private int initialSize = 10;
-        [SerializeField] private bool allowGrowth = true;
-        [SerializeField] Transform parent;
+        public bool incrementalPool = true;
 
-        private Queue<GameObject> pool = new Queue<GameObject>();
-        private void Awake()
+        private GameObject mPrefab;
+
+        private int poolLength = 4;
+        private Transform pooledObjectParent;
+        private List<GameObject> pooledObjectList;
+        private GameObject mObject;
+
+        // Init Obj Pool
+        public void InitializePool(GameObject inPrefab, int inPoolSize = 4)
         {
-            for (int i = 0; i < initialSize; i++)
+            poolLength = inPoolSize;
+            mPrefab = inPrefab;
+
+            pooledObjectParent = this.transform;
+
+            pooledObjectList = new List<GameObject>();
+            for (int index = 0; index < poolLength; index++)
             {
-                GameObject obj = Instantiate(prefab, parent);
-                obj.SetActive(false);
-                pool.Enqueue(obj);
+                mObject = GameObject.Instantiate(mPrefab, pooledObjectParent) as GameObject;
+                pooledObjectList.Add(mObject);
+                mObject.SetActive(false);
             }
+
+            mObject = null;
         }
 
-        /// <summary>
-        /// Get an object from the pool, or create one if none available.
-        /// </summary>
-        public GameObject Get()
+        ///  <summary>Get the curretly deactivate object from the pool</summary>
+        public GameObject GetObjectFromPool()
         {
-            if (pool.Count > 0)
+            for (int index = 0; index < pooledObjectList.Count; index++)
             {
-                GameObject obj = pool.Dequeue();
-                obj.SetActive(true);
-                return obj;
+                if (!pooledObjectList[index].activeInHierarchy)
+                    return pooledObjectList[index];
             }
 
-            if (allowGrowth)
-                return Instantiate(prefab, parent);
+            if (incrementalPool)
+            {
+                mObject = GameObject.Instantiate(mPrefab, pooledObjectParent) as GameObject;
+                pooledObjectList.Add(mObject);
+                return mObject;
+            }
 
             return null;
         }
 
-        /// <summary>
-        /// Return an object back to the pool.
-        /// </summary>
-        public void Release(GameObject obj)
+        /// <summary>Reset and Deactivate all pooled objects</summary>
+        public void ReleaseAll()
         {
-            // Reset GameCard component if present
-            var gameCard = obj.GetComponent<GameCard>();
-            if (gameCard != null)
+            if (pooledObjectList == null) return;
+
+            for (int index = 0; index < pooledObjectList.Count; index++)
             {
-                gameCard.ResetCard();
+                if (pooledObjectList[index] != null)
+                {
+                    pooledObjectList[index].SetActive(false);
+                }
             }
-
-            // Reset transform parent and position
-            obj.transform.SetParent(parent);
-            obj.transform.localPosition = Vector3.zero;
-            obj.transform.localRotation = Quaternion.identity;
-            obj.transform.localScale = Vector3.one;
-
-            obj.SetActive(false);
-            pool.Enqueue(obj);
         }
     }
 }
