@@ -36,11 +36,11 @@ namespace CyberSpeed.UI
 
         private void OnGameOver(ScoreData scoreData)
         {
-            gameTimeTxt.text = scoreData.GameTime.ToString("F2");
+            gameTimeTxt.text = scoreData.GameTime.ToString("F2") + "s";
             totalTurnsTxt.text = scoreData.TotalTurns.ToString();
             matchCountTxt.text = scoreData.TotalMatches.ToString();
             comboStreaksTxt.text = scoreData.TotalComboStreaks.ToString();
-            // totalScoreTxt.text = scoreData.TotalScore.ToString();
+            totalScoreTxt.text = scoreData.TotalScore.ToString();
         }
 
         private void OnPlayAgainButtonClicked()

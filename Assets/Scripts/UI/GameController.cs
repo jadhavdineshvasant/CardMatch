@@ -158,6 +158,7 @@ namespace CyberSpeed.UI
             memoriseMSG.SetActive(false);
             isPreviewMode = false;
             DispatchScoreUpdate();
+            StartCoroutine(UpdateGameTimer());
         }
 
         private GameCard openCard = null;
@@ -225,7 +226,7 @@ namespace CyberSpeed.UI
                 matchedCards.Add(gameCard);
                 DispatchScoreUpdate();
 
-                // TODO: Check for win condition
+                CheckWinCondition();
             }
             else
             {
@@ -256,6 +257,44 @@ namespace CyberSpeed.UI
                     card.SetInteractable(false);
                 }
             }
+        }
+
+        private IEnumerator UpdateGameTimer()
+        {
+            while (matchedCards.Count < activeCards.Count && !isPreviewMode)
+            {
+                float currentTime = Time.time - gameStartTime;
+                int minutes = Mathf.FloorToInt(currentTime / 60);
+                int seconds = Mathf.FloorToInt(currentTime % 60);
+                gameTimer.text = $"{minutes:00}:{seconds:00}";
+                yield return new WaitForSeconds(1f);
+            }
+        }
+
+        private void CheckWinCondition()
+        {
+            if (matchedCards.Count == activeCards.Count)
+            {
+                StartCoroutine(HandleGameComplete());
+            }
+        }
+
+        private IEnumerator HandleGameComplete()
+        {
+            isMatchingInProgress = true;
+            yield return new WaitForSeconds(1f);
+
+            var finalScoreData = new ScoreData
+            {
+                GameTime = Time.time - gameStartTime,
+                TotalTurns = totalTurns,
+                TotalMatches = totalMatches,
+                TotalComboStreaks = bestComboStreak,
+                TotalScore = totalScore
+            };
+
+            EventDispatcher.Instance.Dispatch(EventConstants.ON_GAME_OVER, finalScoreData);
+            Debug.Log($"Game Complete! Final Score: {totalScore}, Time: {finalScoreData.GameTime:F2}s");
         }
 
         // this method can be utilised for displaying the next match value on streak
