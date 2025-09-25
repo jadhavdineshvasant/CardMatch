@@ -184,6 +184,7 @@ namespace CyberSpeed.UI
             if (isMatch)
             {
                 //this is double card opened
+                Debug.Log("yes it is matched");
                 openCardIds.Remove(clickedCardID);
             }
             else
