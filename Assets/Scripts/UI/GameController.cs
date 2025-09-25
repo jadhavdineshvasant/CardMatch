@@ -24,7 +24,7 @@ namespace CyberSpeed.UI
         [SerializeField] private Image memoriseMsgBar;
         [SerializeField] private TextMeshProUGUI gameTimer;
 
-        [SerializeField] Button homeBtn;
+        [SerializeField] Button homeBtn, saveBtn;
 
         private GridLayoutGroup gridLayoutGroup;
         private List<GameCard> activeCards = new List<GameCard>();
@@ -41,13 +41,17 @@ namespace CyberSpeed.UI
         private void OnEnable()
         {
             EventDispatcher.Instance.Subscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
+            GameManager.OnExitYes += HandleExitYes;
             homeBtn.onClick.AddListener(OnHomeButtonClicked);
+            saveBtn.onClick.AddListener(OnSaveButtonClicked);
         }
 
         private void OnDisable()
         {
             EventDispatcher.Instance.Unsubscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
+            GameManager.OnExitYes -= HandleExitYes;
             homeBtn.onClick.RemoveListener(OnHomeButtonClicked);
+            saveBtn.onClick.RemoveListener(OnSaveButtonClicked);
         }
 
         private void OnGameOver(ScoreData scoreData)
@@ -234,8 +238,18 @@ namespace CyberSpeed.UI
 
         private void OnHomeButtonClicked()
         {
+            GameManager.Instance.ShowExitPopupUI();
+        }
+
+        private void HandleExitYes()
+        {
             CleanupGameplayScreen();
-            GameManager.Instance.OnHomeClicked();
+            GameManager.Instance.ShowExitPopupUI();
+        }
+
+        private void OnSaveButtonClicked()
+        {
+            GameManager.Instance.ShowSavePopupUI();
         }
     }
 }

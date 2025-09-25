@@ -5,6 +5,7 @@ using UnityEngine;
 using CyberSpeed.UI;
 using CyberSpeed.SO;
 using DifficultyLevelData = CyberSpeed.SO.DifficultyLevelSO.DifficultyLevelData;
+using System;
 
 namespace CyberSpeed.Manager
 {
@@ -20,9 +21,11 @@ namespace CyberSpeed.Manager
         [SerializeField] private LevelSelectUI levelSelectUIHandler;
         [SerializeField] private IntroScreenUI introUIHandler;
         [SerializeField] private ResultScreenUI resultScreenUIHandler;
+        [SerializeField] private ExitPopupUI exitUIHandler;
+        [SerializeField] private SavePopupUI saveUIHandler;
         [SerializeField] private GameController gameHandler;
 
-        // [SerializeField] private CardsGrid cardGrid;
+        public static event Action OnExitYes;
 
         private DifficultyLevelData selectedLevel;
 
@@ -85,7 +88,6 @@ namespace CyberSpeed.Manager
         {
             levelSelectUIHandler.gameObject.SetActive(false);
         }
-        #endregion
 
         private void OnLevelClicked(DifficultyLevelData levelData)
         {
@@ -93,7 +95,50 @@ namespace CyberSpeed.Manager
             HideAllScreens();
             gameHandler.OnLevelStarted(levelData);
         }
+        #endregion
 
+        #region Exit Popup Show/Hide
+        public void ShowExitPopupUI()
+        {
+            exitUIHandler.gameObject.SetActive(true);
+        }
+
+        public void ExitPopupSaveYes()
+        {
+            OnExitYes?.Invoke();
+            ShowIntroUI();
+            // call save functionality from here
+        }
+
+        public void ExitPopupSaveNo()
+        {
+            OnExitYes?.Invoke();
+            ShowIntroUI();
+            // dont save anything : do exit
+        }
+
+        public void HideExitPopupUI()
+        {
+            exitUIHandler.gameObject.SetActive(false);
+        }
+        #endregion
+
+        #region Game Save Popup Show/Hide
+        public void ShowSavePopupUI()
+        {
+            saveUIHandler.gameObject.SetActive(true);
+        }
+
+        public void SaveGameYes()
+        {
+            // call save functionality from here
+        }
+
+        public void HideSavePopupUI()
+        {
+            saveUIHandler.gameObject.SetActive(false);
+        }
+        #endregion
         public void OnPlayAgainClicked()
         {
             HideAllScreens();
@@ -111,6 +156,7 @@ namespace CyberSpeed.Manager
             levelSelectUIHandler.gameObject.SetActive(false);
             introUIHandler.gameObject.SetActive(false);
             resultScreenUIHandler.gameObject.SetActive(false);
+            exitUIHandler.gameObject.SetActive(false);
         }
 
         // public void OnGameOver(ScoreData scoreData)
