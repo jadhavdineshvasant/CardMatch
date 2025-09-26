@@ -6,6 +6,7 @@ using CyberSpeed.UI;
 using CyberSpeed.SO;
 using DifficultyLevelData = CyberSpeed.SO.DifficultyLevelSO.DifficultyLevelData;
 using System;
+using CyberSpeed.SerialisedClasses;
 
 namespace CyberSpeed.Manager
 {

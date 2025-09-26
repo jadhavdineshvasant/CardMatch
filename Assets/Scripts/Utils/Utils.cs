@@ -5,6 +5,7 @@ using DifficultyLevelData = CyberSpeed.SO.DifficultyLevelSO.DifficultyLevelData;
 using CyberSpeed.SO;
 using CyberSpeed.Manager;
 using System.IO;
+using CyberSpeed.SerialisedClasses;
 
 public static class Utilities
 {

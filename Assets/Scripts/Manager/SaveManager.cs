@@ -5,6 +5,7 @@ using CyberSpeed.UI;
 using CyberSpeed.Utils;
 using System.IO;
 using System.Linq;
+using CyberSpeed.SerialisedClasses;
 
 namespace CyberSpeed.Manager
 {
