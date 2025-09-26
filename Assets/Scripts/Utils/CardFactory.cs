@@ -70,18 +70,6 @@ namespace CyberSpeed.Utils
         }
 
         /// <summary>
-        /// Releases a card back to the pool
-        /// </summary>
-        public void ReleaseCard(GameCard card)
-        {
-            if (card != null)
-            {
-                card.ResetCard();
-                card.gameObject.SetActive(false);
-            }
-        }
-
-        /// <summary>
         /// Releases all cards in the pool
         /// </summary>
         public void ReleaseAllCards()
