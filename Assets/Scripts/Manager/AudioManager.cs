@@ -33,7 +33,7 @@ namespace CyberSpeed.Manager
 
         public void PlayBGMusic()
         {
-            if (isBGMusicPlaying || bgMusicSource != null) return;
+            if (isBGMusicPlaying || bgMusicSource == null) return;
             bgMusicSource.Play();
             isBGMusicPlaying = true;
         }

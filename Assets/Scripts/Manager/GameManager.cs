@@ -178,12 +178,14 @@ namespace CyberSpeed.Manager
 
         public void OnPlayAgainClicked()
         {
+            AudioManager.Instance.PlayBGMusic();
             HideAllScreens();
             ShowLevelSelectUI();
         }
 
         public void OnHomeClicked()
         {
+            AudioManager.Instance.PlayBGMusic();
             HideAllScreens();
             ShowIntroUI();
         }
