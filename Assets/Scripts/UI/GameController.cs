@@ -248,6 +248,9 @@ namespace CyberSpeed.UI
                 timerStringBuilder.Append(seconds.ToString("00"));
                 gameTimer.text = timerStringBuilder.ToString();
 
+
+                // gameTimer.text = gameStartTime.GetGameTime().ToString();
+
                 yield return waitForSecond;
             }
         }

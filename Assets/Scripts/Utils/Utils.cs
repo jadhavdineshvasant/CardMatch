@@ -6,6 +6,7 @@ using CyberSpeed.SO;
 using CyberSpeed.Manager;
 using System.IO;
 using CyberSpeed.SerialisedClasses;
+using System.Text;
 
 public static class Utilities
 {
@@ -103,4 +104,20 @@ public static class Utilities
             File.Delete(savePath);
         }
     }
+
+    // private static StringBuilder timerStringBuilder = new StringBuilder(8);
+    // public static StringBuilder GetGameTime(this float gameStartTime)
+    // {
+    //     float currentTime = Time.time - gameStartTime;
+
+    //     int minutes = Mathf.FloorToInt(currentTime * (1f / 60f));
+    //     int seconds = Mathf.FloorToInt(currentTime % 60);
+
+    //     timerStringBuilder.Clear();
+    //     timerStringBuilder.Append(minutes.ToString("00"));
+    //     timerStringBuilder.Append(':');
+    //     timerStringBuilder.Append(seconds.ToString("00"));
+
+    //     return timerStringBuilder;
+    // }
 }
