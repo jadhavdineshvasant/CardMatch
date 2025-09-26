@@ -19,12 +19,14 @@ namespace CyberSpeed.UI
 
         [Space(10)][SerializeField] Button playAgainBtn;
         [SerializeField] Button homeBtn;
+        [SerializeField] private GameObject winParticleEffect;
 
         private void OnEnable()
         {
             EventDispatcher.Instance.Subscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
             playAgainBtn.onClick.AddListener(OnPlayAgainButtonClicked);
             homeBtn.onClick.AddListener(OnHomeButtonClicked);
+            winParticleEffect.SetActive(true);
         }
 
         private void OnDisable()
@@ -32,6 +34,7 @@ namespace CyberSpeed.UI
             EventDispatcher.Instance.Unsubscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
             playAgainBtn.onClick.RemoveListener(OnPlayAgainButtonClicked);
             homeBtn.onClick.RemoveListener(OnHomeButtonClicked);
+            winParticleEffect.SetActive(false);
         }
 
         private void OnGameOver(ScoreData scoreData)

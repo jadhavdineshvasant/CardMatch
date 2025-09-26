@@ -26,7 +26,8 @@ namespace CyberSpeed.UI
 
         [SerializeField] Button homeBtn, saveBtn;
 
-        private GridLayoutGroup gridLayoutGroup;
+        [SerializeField] private GridLayoutGroup gridLayoutGroup;
+
         private List<GameCard> activeCards = new List<GameCard>();
         private bool isPreviewMode = false;
         private float gameStartTime = 0f;
@@ -34,7 +35,6 @@ namespace CyberSpeed.UI
         void Awake()
         {
             root.gameObject.SetActive(false);
-            gridLayoutGroup = cardGrid.GetComponent<GridLayoutGroup>();
             cardPool.InitializePool(cardPrefab);
         }
 

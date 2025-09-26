@@ -13,12 +13,14 @@ namespace CyberSpeed.UI
 {
     public class LevelTile : MonoBehaviour, IPointerDownHandler, IPointerExitHandler, IPointerClickHandler
     {
+        [SerializeField] private Button button;
         [SerializeField] private Image levelImage;
         [SerializeField] private TextMeshProUGUI levelTitle;
         [SerializeField] private TextMeshProUGUI levelName;
         [SerializeField] private TextMeshProUGUI scoreMultiplier;
         [SerializeField] private Image saveIcon;
         DifficultyLevelData levelData;
+        // IEnumerator buttonAnimCoroutine;
 
         public void Init(DifficultyLevelData levelData, Action<DifficultyLevelData> onLevelClicked)
         {
@@ -29,10 +31,7 @@ namespace CyberSpeed.UI
             levelName.color = levelData.titleColor;
             saveIcon.gameObject.SetActive(levelData.IsSavedLevelExists());
             scoreMultiplier.text = $"( +{levelData.baseScore} per match )";
-
-            Button btn = this.GetComponent<Button>();
-            if (btn == null) this.AddComponent<Button>();
-            btn.onClick.AddListener(() => onLevelClicked?.Invoke(levelData));
+            button.onClick.AddListener(() => onLevelClicked?.Invoke(levelData));
         }
 
         public void OnPointerDown(PointerEventData eventData)
