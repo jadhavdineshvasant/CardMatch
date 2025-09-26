@@ -61,6 +61,7 @@ namespace CyberSpeed.UI
         private void OnEnable()
         {
             EventDispatcher.Instance.Subscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
+            MatchManager.OnGameProgressChanged += OnGameProgressed;
             GameManager.OnExitYes += HandleExitYes;
             homeBtn.onClick.AddListener(OnHomeButtonClicked);
             saveBtn.onClick.AddListener(OnSaveButtonClicked);
@@ -69,9 +70,15 @@ namespace CyberSpeed.UI
         private void OnDisable()
         {
             EventDispatcher.Instance.Unsubscribe<ScoreData>(EventConstants.ON_GAME_RESULT, OnGameOver);
+            MatchManager.OnGameProgressChanged -= OnGameProgressed;
             GameManager.OnExitYes -= HandleExitYes;
             homeBtn.onClick.RemoveListener(OnHomeButtonClicked);
             saveBtn.onClick.RemoveListener(OnSaveButtonClicked);
+        }
+
+        private void OnGameProgressed(bool isProgressed)
+        {
+            saveBtn.interactable = isProgressed;
         }
 
         private void OnGameOver(ScoreData scoreData)
@@ -92,6 +99,8 @@ namespace CyberSpeed.UI
             SetupGridLayout(levelData.colsCount);
 
             bool isResumedGame = savedLevelData != null;
+
+            saveBtn.interactable = isResumedGame;
 
             if (isResumedGame)
             {
@@ -279,7 +288,16 @@ namespace CyberSpeed.UI
 
         private void OnHomeButtonClicked()
         {
-            gameManager.ShowExitPopupUI();
+            bool isGameProgressed = matchManager.HasGameProgress();
+            if (isGameProgressed)
+            {
+                gameManager.ShowExitPopupUI();
+            }
+            else
+            {
+                HandleExitYes();
+                gameManager.ShowIntroUI();
+            }
         }
 
         private void HandleExitYes()

@@ -95,7 +95,7 @@ namespace CyberSpeed.Manager
             {
                 if (savedLevelData.cardMatched[i] && cards[i] != null)
                 {
-                    matchedCards.Add(cards[i]);
+                    AddCardToMatch(cards[i]);
                 }
             }
 
@@ -177,12 +177,17 @@ namespace CyberSpeed.Manager
 
             openCard.Matched();
             gameCard.Matched();
-            matchedCards.Add(openCard);
-            matchedCards.Add(gameCard);
+
+            AddCardToMatch(openCard);
+            AddCardToMatch(gameCard);
 
             Debug.Log($"Cards matched! Now have {matchedCards.Count} matched cards out of {activeCards.Count} total");
 
             DispatchScoreUpdate();
+
+            // Dispatch progress change event for UI updates (save button state)
+            OnGameProgressChanged?.Invoke(HasGameProgress());
+
             CheckWinCondition();
         }
 
@@ -194,6 +199,9 @@ namespace CyberSpeed.Manager
             openCard.FlipToBack();
             gameCard.FlipToBack();
             DispatchScoreUpdate();
+
+            // Dispatch progress change event for UI updates (save button state)
+            OnGameProgressChanged?.Invoke(HasGameProgress());
         }
 
         private void SetAllCardsInteractable(bool interactable)
@@ -286,5 +294,54 @@ namespace CyberSpeed.Manager
         }
 
         public List<GameCard> GetActiveCards() => activeCards;
+
+        /// <summary>
+        /// Gets the number of matched cards
+        /// </summary>
+        public int MatchedCardsCount => matchedCards.Count;
+
+        /// <summary>
+        /// Gets a copy of matched cards collection
+        /// </summary>
+        public HashSet<GameCard> GetMatchedCards() => new HashSet<GameCard>(matchedCards);
+
+        /// <summary>
+        /// Checks if there's any game progress worth saving
+        /// </summary>
+        public bool HasGameProgress()
+        {
+            return totalTurns > 0 || matchedCards.Count > 0 || totalScore > 0;
+        }
+
+        /// <summary>
+        /// Checks if the game is partially completed (has matches but not finished)
+        /// </summary>
+        public bool IsGameInProgress()
+        {
+            return HasGameProgress() && !IsGameComplete();
+        }
+
+        /// <summary>
+        /// Checks if all cards are matched (game completed)
+        /// </summary>
+        public bool IsGameComplete()
+        {
+            return activeCards.Count > 0 && matchedCards.Count == activeCards.Count;
+        }
+
+
+        /// <summary>
+        /// Event dispatched when game progress changes (for save button state)
+        /// </summary>
+        public static event System.Action<bool> OnGameProgressChanged;
+
+        private void AddCardToMatch(GameCard card)
+        {
+            if (matchedCards.Add(card))
+            {
+                // Only dispatch events if card was actually added (not already in set)
+                OnGameProgressChanged?.Invoke(HasGameProgress());
+            }
+        }
     }
 }
