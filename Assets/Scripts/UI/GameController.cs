@@ -175,8 +175,9 @@ namespace CyberSpeed.UI
             // Use factory to create saved cards
             for (int i = 0; i < cardIDs.Count; i++)
             {
-                var card = cardFactory.CreateSavedCard(cardIDs[i], gridTransform,
-                                savedLevelData.cardMatched[i], matchManager.HandleCardClick);
+                bool isMatched = i < savedLevelData.cardMatched.Count ? savedLevelData.cardMatched[i] : false;
+
+                var card = cardFactory.CreateSavedCard(cardIDs[i], gridTransform, isMatched, matchManager.HandleCardClick);
                 activeCards.Add(card);
             }
         }
@@ -239,14 +240,7 @@ namespace CyberSpeed.UI
             while (!matchManager.IsMatchingInProgress && !isPreviewMode)
             {
                 float currentTime = Time.time - gameStartTime;
-                int minutes = Mathf.FloorToInt(currentTime * (1f / 60f));
-                int seconds = Mathf.FloorToInt(currentTime % 60);
-
-                timerStringBuilder.Clear();
-                timerStringBuilder.Append(minutes.ToString("00"));
-                timerStringBuilder.Append(':');
-                timerStringBuilder.Append(seconds.ToString("00"));
-                gameTimer.text = timerStringBuilder.ToString();
+                gameTimer.text = currentTime.GetGameTime();
 
 
                 // gameTimer.text = gameStartTime.GetGameTime().ToString();

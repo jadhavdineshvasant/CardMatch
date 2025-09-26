@@ -105,19 +105,22 @@ public static class Utilities
         }
     }
 
-    // private static StringBuilder timerStringBuilder = new StringBuilder(8);
-    // public static StringBuilder GetGameTime(this float gameStartTime)
-    // {
-    //     float currentTime = Time.time - gameStartTime;
 
-    //     int minutes = Mathf.FloorToInt(currentTime * (1f / 60f));
-    //     int seconds = Mathf.FloorToInt(currentTime % 60);
+    /// <summary>
+    /// Formats time in seconds to MM:SS format
+    /// </summary>
+    public static string FormatGameTime(float timeInSeconds)
+    {
+        int minutes = Mathf.FloorToInt(timeInSeconds * (1f / 60f));
+        int seconds = Mathf.FloorToInt(timeInSeconds % 60);
+        return $"{minutes:00}:{seconds:00}";
+    }
 
-    //     timerStringBuilder.Clear();
-    //     timerStringBuilder.Append(minutes.ToString("00"));
-    //     timerStringBuilder.Append(':');
-    //     timerStringBuilder.Append(seconds.ToString("00"));
-
-    //     return timerStringBuilder;
-    // }
+    /// <summary>
+    /// Extension method to format float time values
+    /// </summary>
+    public static string GetGameTime(this float timeInSeconds)
+    {
+        return FormatGameTime(timeInSeconds);
+    }
 }
