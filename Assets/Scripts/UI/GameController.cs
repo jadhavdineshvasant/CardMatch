@@ -121,9 +121,11 @@ namespace CyberSpeed.UI
                 SpawnCards(shuffledCardIDs);
                 matchManager.InitializeGame(activeCards);
 
-                // Start preview only for new games
-                StartCoroutine(PreviewGrid(levelData.previewDuration));
+
             }
+
+            // Start preview only for new games
+            StartCoroutine(PreviewGrid(levelData.previewDuration));
         }
 
         public void OnLevelResumed(DifficultyLevelData levelData, GameSaveData savedLevelData)
@@ -212,7 +214,8 @@ namespace CyberSpeed.UI
 
             foreach (var card in activeCards)
             {
-                card.FlipToBack(animate: true);
+                if (!card.IsMatched)
+                    card.FlipToBack(animate: true);
             }
 
             yield return new WaitForSeconds(PREVIEW_FLIP_DELAY);
