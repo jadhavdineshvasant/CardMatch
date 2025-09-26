@@ -4,6 +4,9 @@ using UnityEngine;
 using CyberSpeed.Utils;
 using CyberSpeed.SerialisedClasses;
 using CyberSpeed.UI;
+using DifficultyLevelData = CyberSpeed.SO.DifficultyLevelSO.DifficultyLevelData;
+using System.Linq;
+using System.IO;
 
 namespace CyberSpeed.Manager
 {
@@ -16,15 +19,13 @@ namespace CyberSpeed.Manager
         private List<GameCard> matchedCards = new List<GameCard>();
         private bool isMatchingInProgress = false;
 
-        private int streak = 0;
-        private int totalScore = 0;
-        private int totalTurns = 0;
-        private int totalMatches = 0;
-        private int bestComboStreak = 0;
-        private float gameStartTime = 0f;
+        public int streak { get; private set; }
+        public int totalScore { get; private set; }
+        public int totalTurns { get; private set; }
+        public int totalMatches { get; private set; }
+        public int bestComboStreak { get; private set; }
+        public float gameStartTime { get; private set; }
 
-        public int CurrentStreak => streak;
-        public int TotalScore => totalScore;
         public bool IsMatchingInProgress => isMatchingInProgress;
 
         void Awake()
@@ -118,6 +119,8 @@ namespace CyberSpeed.Manager
             openCard = null;
             isMatchingInProgress = false;
             SetAllCardsInteractable(true);
+
+            DebugSaveData();
         }
 
         private void ProcessSuccessfulMatch(GameCard gameCard)
@@ -243,6 +246,16 @@ namespace CyberSpeed.Manager
 
             EventDispatcher.Instance.Dispatch(EventConstants.ON_SCORE_UPDATED, scoreData);
             Debug.Log($"Score updated: Turns: {totalTurns}, Matches: {totalMatches}, Current Streak: {streak}, Best Streak: {bestComboStreak}, Score: {totalScore}");
+        }
+
+        private void DebugSaveData()
+        {
+
+        }
+
+        public List<GameCard> GetActiveCards()
+        {
+            return activeCards;
         }
     }
 }

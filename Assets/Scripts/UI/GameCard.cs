@@ -28,6 +28,7 @@ namespace CyberSpeed.UI
         private bool isFlipped = false;
         private bool isAnimating = false;
         private bool isInteractable = true;
+        private bool isMatched = false;
 
         public static event Action<GameCard> OnCardFlipped;
         private Action<GameCard> onCardClickedCallback;
@@ -36,6 +37,7 @@ namespace CyberSpeed.UI
         public bool IsFlipped { get { return isFlipped; } private set { isFlipped = value; } }
         public bool IsAnimating { get { return isAnimating; } private set { isAnimating = value; } }
         public bool IsInteractable { get { return isInteractable; } private set { isInteractable = value; } }
+        public bool IsMatched { get { return isMatched; } private set { isMatched = value; } }
         public Sprite CardSprite { get { return cardSprite; } private set { cardSprite = value; } }
 
         public void InitCard(int cardID, Sprite frontSprite, Action<GameCard> cardClicked)
@@ -57,6 +59,7 @@ namespace CyberSpeed.UI
 
         public void Matched()
         {
+            IsMatched = true;
             IsInteractable = false;
             SetMatchedAlpha();
         }
@@ -88,7 +91,7 @@ namespace CyberSpeed.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (!isInteractable || isAnimating || isFlipped)
+            if (!isInteractable || isAnimating || isFlipped || IsMatched)
                 return;
 
             FlipCard();
@@ -196,6 +199,7 @@ namespace CyberSpeed.UI
             isFlipped = false;
             isAnimating = false;
             isInteractable = true; // Reset interactable state
+            isMatched = false; // Reset matched state
             transform.localScale = Vector3.one;
             SetCardVisuals(false);
 

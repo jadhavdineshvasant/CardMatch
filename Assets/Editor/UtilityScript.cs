@@ -35,6 +35,15 @@ namespace CyberSpeed.ExtraTools
             string path = Directory.GetParent(Application.dataPath).FullName;
             EditorUtility.RevealInFinder(path);
         }
+
+        [MenuItem("Extra Tools/Open Saved Game File Location")]
+        public static void OpenSavedGameLocation()
+        {
+            string filePath = Path.Combine(Application.persistentDataPath);
+            string directoryPath = Path.GetDirectoryName(filePath);
+            string path = (File.Exists(filePath)) ? filePath : directoryPath;
+            EditorUtility.RevealInFinder(path);
+        }
 #endif
     }
 }

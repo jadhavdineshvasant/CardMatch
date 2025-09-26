@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class GameSaveData
 {
     public int rows;
@@ -10,7 +11,8 @@ public class GameSaveData
     public int matches;
     public int streak;
     public int score;
-    public int gameTimer;
-    public List<int> cardValues;
+    public float gameTimer;
+    public List<int> cardID;
     public List<bool> cardMatched;
+    public List<bool> isFlipped;
 }

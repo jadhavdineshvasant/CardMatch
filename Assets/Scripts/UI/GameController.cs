@@ -244,7 +244,7 @@ namespace CyberSpeed.UI
         private void HandleExitYes()
         {
             CleanupGameplayScreen();
-            GameManager.Instance.ShowExitPopupUI();
+            GameManager.Instance.HideExitPopupUI();
         }
 
         private void OnSaveButtonClicked()

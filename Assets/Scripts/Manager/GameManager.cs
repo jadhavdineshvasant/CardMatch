@@ -105,9 +105,10 @@ namespace CyberSpeed.Manager
 
         public void ExitPopupSaveYes()
         {
+            // call save functionality from here
+            SaveGameProgress();
             OnExitYes?.Invoke();
             ShowIntroUI();
-            // call save functionality from here
         }
 
         public void ExitPopupSaveNo()
@@ -132,6 +133,7 @@ namespace CyberSpeed.Manager
         public void SaveGameYes()
         {
             // call save functionality from here
+            SaveGameProgress();
         }
 
         public void HideSavePopupUI()
@@ -159,10 +161,10 @@ namespace CyberSpeed.Manager
             exitUIHandler.gameObject.SetActive(false);
         }
 
-        // public void OnGameOver(ScoreData scoreData)
-        // {
-        //     ShowResultScreenUI();
-        // }
+        private void SaveGameProgress()
+        {
+            SaveManager.Instance.SaveGameProgress();
+        }
 
         public CardSO GetCardData()
         {
@@ -172,6 +174,11 @@ namespace CyberSpeed.Manager
         public DifficultyLevelSO GetLevelData()
         {
             return difficultyLevelSO;
+        }
+
+        public DifficultyLevelData GetSlectedLevelData()
+        {
+            return selectedLevel;
         }
     }
 }
