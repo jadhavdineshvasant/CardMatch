@@ -823,7 +823,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 129227890}
-  - component: {fileID: 129227892}
   - component: {fileID: 129227891}
   - component: {fileID: 129227893}
   m_Layer: 5
@@ -877,18 +876,6 @@ MonoBehaviour:
   m_Spacing: {x: 10, y: 10}
   m_Constraint: 0
   m_ConstraintCount: 2
---- !u!114 &129227892
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 129227889}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76a8d01e0462148b1803a30a5072aa8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &129227893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20340,13 +20327,12 @@ MonoBehaviour:
   cardPool: {fileID: 129227893}
   cardPrefab: {fileID: 8146247457813802246, guid: 908eb4058c6d1462e8892ec5aa440ad3, type: 3}
   root: {fileID: 467060019}
-  cardGrid: {fileID: 129227892}
+  gridLayoutGroup: {fileID: 129227891}
   memoriseMSG: {fileID: 1646497051}
   memoriseMsgBar: {fileID: 625996120}
   gameTimer: {fileID: 1025670016}
   homeBtn: {fileID: 265108848}
   saveBtn: {fileID: 1404780367}
-  gridLayoutGroup: {fileID: 129227891}
 --- !u!1 &2010816098
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,14 +20,13 @@ namespace CyberSpeed.UI
         [SerializeField] private GameObject cardPrefab;
 
         [SerializeField] private GameObject root;
-        [SerializeField] private GameGrid cardGrid;
+        [SerializeField] private GridLayoutGroup gridLayoutGroup;
+
         [SerializeField] private GameObject memoriseMSG;
         [SerializeField] private Image memoriseMsgBar;
         [SerializeField] private TextMeshProUGUI gameTimer;
 
         [SerializeField] Button homeBtn, saveBtn;
-
-        [SerializeField] private GridLayoutGroup gridLayoutGroup;
 
         // Configuration constants
         private const float PREVIEW_INITIAL_DELAY = 0.25f;
@@ -53,7 +52,7 @@ namespace CyberSpeed.UI
             // Cache frequently used references
             gameManager = GameManager.Instance;
             matchManager = MatchManager.Instance;
-            gridTransform = cardGrid.transform;
+            gridTransform = gridLayoutGroup.transform;
 
             // Initialize the simple card factory
             cardFactory = new CardFactory(cardPool, gameManager.GetCardData());
@@ -153,9 +152,6 @@ namespace CyberSpeed.UI
 
             // Use factory to create cards
             activeCards = cardFactory.CreateCards(cardIDs, gridTransform, matchManager.HandleCardClick);
-
-            // Update grid with new cards
-            cardGrid.SetCards(activeCards);
         }
 
         private void SpawnCards(GameSaveData savedLevelData)
@@ -171,9 +167,6 @@ namespace CyberSpeed.UI
                     savedLevelData.isFlipped[i], savedLevelData.cardMatched[i], matchManager.HandleCardClick);
                 activeCards.Add(card);
             }
-
-            // Update grid with new cards
-            cardGrid.SetCards(activeCards);
         }
 
         private IEnumerator PreviewGrid(float previewDuration)
@@ -269,7 +262,6 @@ namespace CyberSpeed.UI
         {
             // Use factory to release all cards and clear grid
             cardFactory.ReleaseAllCards();
-            cardGrid.ClearCards();
         }
 
         private void ResetUIElements()
