@@ -15,7 +15,7 @@ namespace CyberSpeed.SO
             public float previewDuration;
             public int rowsCount;
             public int colsCount;
-            public int scoreMultiplier;
+            public int baseScore;
             public Color titleColor;
 
         }

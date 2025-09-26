@@ -144,8 +144,8 @@ namespace CyberSpeed.Manager
                 bestComboStreak = streak;
             }
 
-            int baseScore = 100;
-            int streakBonus = (streak - 1) * 50;
+            int baseScore = GameManager.Instance.GetSlectedLevelData().baseScore;
+            int streakBonus = (streak - 1) * (baseScore / 2);
             int matchScore = baseScore + streakBonus;
             totalScore += matchScore;
 

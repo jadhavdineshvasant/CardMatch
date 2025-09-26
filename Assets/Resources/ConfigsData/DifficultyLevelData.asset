@@ -18,26 +18,26 @@ MonoBehaviour:
     previewDuration: 4
     rowsCount: 2
     colsCount: 2
-    scoreMultiplier: 2
+    baseScore: 10
     titleColor: {r: 0.1882353, g: 0.49019608, b: 0.15294118, a: 1}
   - levelName: NORMAL
     levelSprite: {fileID: 21300000, guid: 5e3a1fb95f29d4c5c9b4b18ed5f39208, type: 3}
     previewDuration: 3
     rowsCount: 3
     colsCount: 4
-    scoreMultiplier: 5
+    baseScore: 20
     titleColor: {r: 0.20392157, g: 0.50980395, b: 0.5058824, a: 1}
   - levelName: HARD
     levelSprite: {fileID: 21300000, guid: 2c65ce4b9b1594fd7b196712249b1ab0, type: 3}
     previewDuration: 2.5
     rowsCount: 4
     colsCount: 6
-    scoreMultiplier: 10
+    baseScore: 30
     titleColor: {r: 0.7058824, g: 0.62352943, b: 0.1254902, a: 1}
   - levelName: EXPERT
     levelSprite: {fileID: 21300000, guid: f1417f6409b764c8fbf741e60d7d95b1, type: 3}
     previewDuration: 2
     rowsCount: 5
     colsCount: 8
-    scoreMultiplier: 20
+    baseScore: 40
     titleColor: {r: 0.65882355, g: 0.25882354, b: 0.6666667, a: 1}

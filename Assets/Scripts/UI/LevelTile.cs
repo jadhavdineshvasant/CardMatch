@@ -28,7 +28,7 @@ namespace CyberSpeed.UI
             levelName.text = levelData.levelName;
             levelName.color = levelData.titleColor;
             saveIcon.gameObject.SetActive(levelData.IsSavedLevelExists());
-            scoreMultiplier.text = $"( +{levelData.scoreMultiplier} per match )";
+            scoreMultiplier.text = $"( +{levelData.baseScore} per match )";
 
             Button btn = this.GetComponent<Button>();
             if (btn == null) this.AddComponent<Button>();
