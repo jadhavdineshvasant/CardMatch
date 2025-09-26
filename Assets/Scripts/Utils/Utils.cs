@@ -4,6 +4,7 @@ using UnityEngine;
 using DifficultyLevelData = CyberSpeed.SO.DifficultyLevelSO.DifficultyLevelData;
 using CyberSpeed.SO;
 using CyberSpeed.Manager;
+using System.IO;
 
 public static class Utilities
 {
@@ -70,5 +71,13 @@ public static class Utilities
         }
 
         return true;
+    }
+
+    public static bool IsSaveLevelDataExist(this DifficultyLevelData levelData)
+    {
+        string fileName = $"{levelData.rowsCount}_{levelData.colsCount}.json";
+        string savePath = Path.Combine(Application.persistentDataPath, fileName);
+
+        return File.Exists(savePath);
     }
 }

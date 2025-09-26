@@ -166,19 +166,10 @@ namespace CyberSpeed.Manager
             SaveManager.Instance.SaveGameProgress();
         }
 
-        public CardSO GetCardData()
-        {
-            return cardSO;
-        }
+        public CardSO GetCardData() => cardSO;
 
-        public DifficultyLevelSO GetLevelData()
-        {
-            return difficultyLevelSO;
-        }
+        public DifficultyLevelSO GetLevelData() => difficultyLevelSO;
 
-        public DifficultyLevelData GetSlectedLevelData()
-        {
-            return selectedLevel;
-        }
+        public DifficultyLevelData GetSlectedLevelData() => selectedLevel;
     }
 }

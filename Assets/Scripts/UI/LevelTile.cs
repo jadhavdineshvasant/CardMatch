@@ -17,6 +17,7 @@ namespace CyberSpeed.UI
         [SerializeField] private TextMeshProUGUI levelTitle;
         [SerializeField] private TextMeshProUGUI levelName;
         [SerializeField] private TextMeshProUGUI scoreMultiplier;
+        [SerializeField] private Image saveIcon;
         DifficultyLevelData levelData;
 
         public void Init(DifficultyLevelData levelData, Action<DifficultyLevelData> onLevelClicked)
@@ -26,6 +27,7 @@ namespace CyberSpeed.UI
             levelTitle.text = $"{levelData.rowsCount} x {levelData.colsCount}";
             levelName.text = levelData.levelName;
             levelName.color = levelData.titleColor;
+            saveIcon.gameObject.SetActive(levelData.IsSaveLevelDataExist());
             scoreMultiplier.text = $"( +{levelData.scoreMultiplier} per match )";
 
             Button btn = this.GetComponent<Button>();

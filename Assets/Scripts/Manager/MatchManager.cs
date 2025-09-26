@@ -119,8 +119,6 @@ namespace CyberSpeed.Manager
             openCard = null;
             isMatchingInProgress = false;
             SetAllCardsInteractable(true);
-
-            DebugSaveData();
         }
 
         private void ProcessSuccessfulMatch(GameCard gameCard)
@@ -246,11 +244,6 @@ namespace CyberSpeed.Manager
 
             EventDispatcher.Instance.Dispatch(EventConstants.ON_SCORE_UPDATED, scoreData);
             Debug.Log($"Score updated: Turns: {totalTurns}, Matches: {totalMatches}, Current Streak: {streak}, Best Streak: {bestComboStreak}, Score: {totalScore}");
-        }
-
-        private void DebugSaveData()
-        {
-
         }
 
         public List<GameCard> GetActiveCards()
