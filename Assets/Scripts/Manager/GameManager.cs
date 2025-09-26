@@ -164,7 +164,7 @@ namespace CyberSpeed.Manager
         }
         public void LoadNewGame()
         {
-            selectedLevel.ClearSavedLevelData();
+            ClearCurrentLevelData();
             HideAllScreens();
             gameHandler.OnLevelStarted(selectedLevel);
         }
@@ -214,5 +214,7 @@ namespace CyberSpeed.Manager
         public DifficultyLevelSO GetLevelData() => difficultyLevelSO;
 
         public DifficultyLevelData GetSlectedLevelData() => selectedLevel;
+
+        public void ClearCurrentLevelData() => selectedLevel.ClearSavedLevelData();
     }
 }

@@ -77,7 +77,6 @@ namespace CyberSpeed.Manager
             levelData = gameManager.GetSlectedLevelData();
 
             Debug.Log($"Game initialized with {activeCards.Count} cards");
-            Debug.Log($"Game initialized with {matchedCards.Count} matched cards");
         }
 
         public void InitializeSavedGame(List<GameCard> cards, GameSaveData savedLevelData)
@@ -222,6 +221,7 @@ namespace CyberSpeed.Manager
             if (matchedCards.Count == activeCards.Count)
             {
                 Debug.Log("WIN CONDITION MET! Starting game completion...");
+                gameManager.ClearCurrentLevelData();
                 AudioManager.Instance.PlayResultScreenSFX();
                 StartCoroutine(HandleGameComplete());
             }
