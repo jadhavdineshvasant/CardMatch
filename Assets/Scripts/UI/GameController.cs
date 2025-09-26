@@ -8,6 +8,7 @@ using CyberSpeed.SO;
 using DifficultyLevelData = CyberSpeed.SO.DifficultyLevelSO.DifficultyLevelData;
 using UnityEngine.UI;
 using TMPro;
+using System.Text;
 
 namespace CyberSpeed.UI
 {
@@ -28,14 +29,30 @@ namespace CyberSpeed.UI
 
         [SerializeField] private GridLayoutGroup gridLayoutGroup;
 
+        // Configuration constants
+        private const float PREVIEW_INITIAL_DELAY = 0.25f;
+        private const float PREVIEW_FLIP_DELAY = 0.5f;
+        private const float TIMER_UPDATE_INTERVAL = 1f;
+
         private List<GameCard> activeCards = new List<GameCard>();
         private bool isPreviewMode = false;
         private float gameStartTime = 0f;
+
+        // Cached references for performance
+        private GameManager gameManager;
+        private MatchManager matchManager;
+        private StringBuilder timerStringBuilder = new StringBuilder(8);
+        private Transform gridTransform;
 
         void Awake()
         {
             root.gameObject.SetActive(false);
             cardPool.InitializePool(cardPrefab);
+
+            // Cache frequently used references
+            gameManager = GameManager.Instance;
+            matchManager = MatchManager.Instance;
+            gridTransform = cardGrid.transform;
         }
 
         private void OnEnable()
@@ -75,7 +92,7 @@ namespace CyberSpeed.UI
 
             SpawnCards(savedLevelData);
 
-            MatchManager.Instance.InitializeSavedGame(activeCards, savedLevelData);
+            matchManager.InitializeSavedGame(activeCards, savedLevelData);
         }
 
         public void OnLevelStarted(DifficultyLevelData levelData)
@@ -95,7 +112,7 @@ namespace CyberSpeed.UI
             SpawnCards(shuffledCardIDs);
 
             // Initialize the match manager with the spawned cards
-            MatchManager.Instance.InitializeGame(activeCards);
+            matchManager.InitializeGame(activeCards);
 
             StartCoroutine(PreviewGrid(levelData.previewDuration));
         }
@@ -117,7 +134,7 @@ namespace CyberSpeed.UI
         private List<int> GenerateShuffledCardPairs(int totalGridElements)
         {
             int totalUniqueItems = totalGridElements / 2;
-            CardSO cardData = GameManager.Instance.GetCardData();
+            CardSO cardData = gameManager.GetCardData();
 
             List<int> cardIDs = Utilities.GetRandomIntList(cardData.cardDataList.Count, totalUniqueItems);
             List<int> cardPairs = new List<int>(totalGridElements);
@@ -132,10 +149,7 @@ namespace CyberSpeed.UI
         {
             activeCards.Clear();
 
-            GameManager gameManager = GameManager.Instance;
             CardSO cardData = gameManager.GetCardData();
-
-            Transform gridTransform = cardGrid.transform;
 
             for (int i = 0; i < cardIDs.Count; i++)
             {
@@ -146,7 +160,7 @@ namespace CyberSpeed.UI
                 cardObj.gameObject.SetActive(true);
 
                 var gameCard = cardObj.GetComponent<GameCard>();
-                gameCard.InitCard(cardInfo.cardID, cardInfo.cardSprite, MatchManager.Instance.HandleCardClick);
+                gameCard.InitCard(cardInfo.cardID, cardInfo.cardSprite, matchManager.HandleCardClick);
                 activeCards.Add(gameCard);
             }
         }
@@ -156,11 +170,7 @@ namespace CyberSpeed.UI
             activeCards.Clear();
 
             List<int> cardIDs = savedLevelData.cardID;
-
-            GameManager gameManager = GameManager.Instance;
             CardSO cardData = gameManager.GetCardData();
-
-            Transform gridTransform = cardGrid.transform;
 
             for (int i = 0; i < cardIDs.Count; i++)
             {
@@ -170,10 +180,8 @@ namespace CyberSpeed.UI
                 cardObj.transform.SetParent(gridTransform, false);
                 cardObj.gameObject.SetActive(true);
 
-                // Debug.Log(cardInfo.cardSprite);
-
                 var gameCard = cardObj.GetComponent<GameCard>();
-                gameCard.InitSavedCard(cardInfo.cardID, cardInfo.cardSprite, savedLevelData.isFlipped[i], savedLevelData.cardMatched[i], MatchManager.Instance.HandleCardClick);
+                gameCard.InitSavedCard(cardInfo.cardID, cardInfo.cardSprite, savedLevelData.isFlipped[i], savedLevelData.cardMatched[i], matchManager.HandleCardClick);
                 activeCards.Add(gameCard);
             }
         }
@@ -182,7 +190,7 @@ namespace CyberSpeed.UI
         {
             memoriseMSG.SetActive(true);
             memoriseMsgBar.fillAmount = 1f;
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(PREVIEW_INITIAL_DELAY);
 
             isPreviewMode = true;
 
@@ -192,13 +200,15 @@ namespace CyberSpeed.UI
                 card.DisableInteraction();
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(PREVIEW_FLIP_DELAY);
 
             float timer = previewDuration;
+            float invPreviewDuration = 1f / previewDuration;
+
             while (timer > 0)
             {
                 timer -= Time.deltaTime;
-                memoriseMsgBar.fillAmount = timer / previewDuration;
+                memoriseMsgBar.fillAmount = timer * invPreviewDuration;
                 yield return null;
             }
 
@@ -209,7 +219,7 @@ namespace CyberSpeed.UI
                 card.FlipToBack(animate: true);
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(PREVIEW_FLIP_DELAY);
 
             foreach (var card in activeCards)
             {
@@ -220,19 +230,27 @@ namespace CyberSpeed.UI
             isPreviewMode = false;
 
             // Start the match manager game and timer
-            MatchManager.Instance.StartGame();
+            matchManager.StartGame();
             StartCoroutine(UpdateGameTimer());
         }
 
         private IEnumerator UpdateGameTimer()
         {
-            while (!MatchManager.Instance.IsMatchingInProgress && !isPreviewMode)
+            var waitForSecond = new WaitForSeconds(TIMER_UPDATE_INTERVAL);
+
+            while (!matchManager.IsMatchingInProgress && !isPreviewMode)
             {
                 float currentTime = Time.time - gameStartTime;
-                int minutes = Mathf.FloorToInt(currentTime / 60);
+                int minutes = Mathf.FloorToInt(currentTime * (1f / 60f));
                 int seconds = Mathf.FloorToInt(currentTime % 60);
-                gameTimer.text = $"{minutes:00}:{seconds:00}";
-                yield return new WaitForSeconds(1f);
+
+                timerStringBuilder.Clear();
+                timerStringBuilder.Append(minutes.ToString("00"));
+                timerStringBuilder.Append(':');
+                timerStringBuilder.Append(seconds.ToString("00"));
+                gameTimer.text = timerStringBuilder.ToString();
+
+                yield return waitForSecond;
             }
         }
 
@@ -259,14 +277,8 @@ namespace CyberSpeed.UI
 
         private void ClearGrid()
         {
-            // Return all cards to object pool and clear grid
-            Transform gridTransform = cardGrid.transform;
-
-            for (int i = gridTransform.childCount - 1; i >= 0; i--)
-            {
-                var child = gridTransform.GetChild(i);
-                cardPool.ReleaseAll();
-            }
+            // Return all cards to object pool and clear grid - optimized to call ReleaseAll only once
+            cardPool.ReleaseAll();
         }
 
         private void ResetUIElements()
@@ -284,18 +296,18 @@ namespace CyberSpeed.UI
 
         private void OnHomeButtonClicked()
         {
-            GameManager.Instance.ShowExitPopupUI();
+            gameManager.ShowExitPopupUI();
         }
 
         private void HandleExitYes()
         {
             CleanupGameplayScreen();
-            GameManager.Instance.HideExitPopupUI();
+            gameManager.HideExitPopupUI();
         }
 
         private void OnSaveButtonClicked()
         {
-            GameManager.Instance.ShowSavePopupUI();
+            gameManager.ShowSavePopupUI();
         }
 
         private void DispatchScoreUpdate(GameSaveData savedLevelData)

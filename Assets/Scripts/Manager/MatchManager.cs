@@ -14,10 +14,18 @@ namespace CyberSpeed.Manager
     {
         public static MatchManager Instance { get; private set; }
 
+        // Configuration constants
+        private const float MATCH_SUCCESS_DELAY = 0.3f;
+        private const float MATCH_FAIL_DELAY = 0.8f;
+        private const float GAME_COMPLETE_DELAY = 1f;
+
         private GameCard openCard = null;
         private List<GameCard> activeCards = new List<GameCard>();
-        private List<GameCard> matchedCards = new List<GameCard>();
+        private HashSet<GameCard> matchedCards = new HashSet<GameCard>();
         private bool isMatchingInProgress = false;
+
+        private GameManager gameManager;
+        private DifficultyLevelData levelData;
 
         public int streak { get; private set; }
         public int totalScore { get; private set; }
@@ -33,6 +41,7 @@ namespace CyberSpeed.Manager
             if (Instance == null)
             {
                 Instance = this;
+                gameManager = GameManager.Instance;
             }
             else
             {
@@ -63,6 +72,9 @@ namespace CyberSpeed.Manager
 
             activeCards = new List<GameCard>(cards);
             matchedCards.Clear();
+
+            // Cache level data for performance
+            levelData = gameManager.GetSlectedLevelData();
 
             Debug.Log($"Game initialized with {activeCards.Count} cards");
         }
@@ -114,7 +126,7 @@ namespace CyberSpeed.Manager
 
             Debug.Log($"Checking match: Card1 ID={openCard.CardID}, Card2 ID={clickedCardID}");
 
-            float waitTime = isMatch ? 0.3f : 0.8f;
+            float waitTime = isMatch ? MATCH_SUCCESS_DELAY : MATCH_FAIL_DELAY;
 
             yield return new WaitForSeconds(waitTime);
 
@@ -144,7 +156,7 @@ namespace CyberSpeed.Manager
                 bestComboStreak = streak;
             }
 
-            int baseScore = GameManager.Instance.GetSlectedLevelData().baseScore;
+            int baseScore = levelData.baseScore;
             int streakBonus = (streak - 1) * (baseScore / 2);
             int matchScore = baseScore + streakBonus;
             totalScore += matchScore;
@@ -205,18 +217,19 @@ namespace CyberSpeed.Manager
         private IEnumerator HandleGameComplete()
         {
             isMatchingInProgress = true;
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(GAME_COMPLETE_DELAY);
 
+            float gameTime = Time.time - gameStartTime;
             var finalScoreData = new ScoreData
             {
-                GameTime = Time.time - gameStartTime,
+                GameTime = gameTime,
                 TotalTurns = totalTurns,
                 TotalMatches = totalMatches,
                 TotalComboStreaks = (streak - 1) < 0 ? 0 : streak - 1,
                 TotalScore = totalScore
             };
 
-            GameManager.Instance.ShowResultScreenUI();
+            gameManager.ShowResultScreenUI();
             EventDispatcher.Instance.Dispatch(EventConstants.ON_GAME_RESULT, finalScoreData);
             Debug.Log($"Game Complete! Final Score: {totalScore}, Time: {finalScoreData.GameTime:F2}s");
         }
@@ -244,9 +257,10 @@ namespace CyberSpeed.Manager
 
         private void DispatchScoreUpdate()
         {
+            float gameTime = Time.time - gameStartTime;
             var scoreData = new ScoreData
             {
-                GameTime = Time.time - gameStartTime,
+                GameTime = gameTime,
                 TotalTurns = totalTurns,
                 TotalMatches = totalMatches,
                 TotalComboStreaks = (streak - 1) < 0 ? 0 : streak - 1,
