@@ -164,7 +164,7 @@ namespace CyberSpeed.UI
             for (int i = 0; i < cardIDs.Count; i++)
             {
                 var card = cardFactory.CreateSavedCard(cardIDs[i], gridTransform,
-                    savedLevelData.isFlipped[i], savedLevelData.cardMatched[i], matchManager.HandleCardClick);
+                                savedLevelData.cardMatched[i], matchManager.HandleCardClick);
                 activeCards.Add(card);
             }
         }

@@ -40,7 +40,7 @@ namespace CyberSpeed.Utils
         /// <summary>
         /// Creates a saved game card with state
         /// </summary>
-        public GameCard CreateSavedCard(int cardID, Transform parent, bool isFlipped, bool isMatched, Action<GameCard> onCardClicked)
+        public GameCard CreateSavedCard(int cardID, Transform parent, bool isMatched, Action<GameCard> onCardClicked)
         {
             var cardObj = cardPool.GetObjectFromPool();
             cardObj.transform.SetParent(parent, false);
@@ -48,7 +48,7 @@ namespace CyberSpeed.Utils
 
             var gameCard = cardObj.GetComponent<GameCard>();
             var cardInfo = cardData.GetCard(cardID);
-            gameCard.InitSavedCard(cardInfo.cardID, cardInfo.cardSprite, isFlipped, isMatched, onCardClicked);
+            gameCard.InitSavedCard(cardInfo.cardID, cardInfo.cardSprite, isMatched, onCardClicked);
 
             return gameCard;
         }

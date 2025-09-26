@@ -14,5 +14,4 @@ public class GameSaveData
     public float gameTimer;
     public List<int> cardID;
     public List<bool> cardMatched;
-    public List<bool> isFlipped;
 }

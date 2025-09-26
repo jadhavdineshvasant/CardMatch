@@ -66,13 +66,13 @@ namespace CyberSpeed.UI
             SetCardVisuals(false);
         }
 
-        public void InitSavedCard(int cardID, Sprite frontSprite, bool isFlipped, bool isMatched, Action<GameCard> cardClicked)
+        public void InitSavedCard(int cardID, Sprite frontSprite, bool isMatched, Action<GameCard> cardClicked)
         {
             ResetCard();
             onCardClickedCallback = cardClicked;
             this.cardID = cardID;
             this.CardSprite = frontSprite;
-            this.IsFlipped = isFlipped;
+            this.IsFlipped = isMatched;
             this.IsMatched = isMatched;
             SetCardVisuals(isFlipped);
         }

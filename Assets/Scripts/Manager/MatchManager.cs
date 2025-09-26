@@ -77,17 +77,30 @@ namespace CyberSpeed.Manager
             levelData = gameManager.GetSlectedLevelData();
 
             Debug.Log($"Game initialized with {activeCards.Count} cards");
+            Debug.Log($"Game initialized with {matchedCards.Count} matched cards");
         }
 
         public void InitializeSavedGame(List<GameCard> cards, GameSaveData savedLevelData)
         {
             InitializeGame(cards);
 
+            // Restore saved game stats
             streak = savedLevelData.streak;
             totalScore = savedLevelData.score;
             totalTurns = savedLevelData.turns;
             totalMatches = savedLevelData.matches;
             bestComboStreak = savedLevelData.streak;
+
+            // Add already matched cards to matchedCards list
+            for (int i = 0; i < cards.Count && i < savedLevelData.cardMatched.Count; i++)
+            {
+                if (savedLevelData.cardMatched[i] && cards[i] != null)
+                {
+                    matchedCards.Add(cards[i]);
+                }
+            }
+
+            Debug.Log($"Saved game loaded: {matchedCards.Count} cards already matched");
         }
 
         public void StartGame()

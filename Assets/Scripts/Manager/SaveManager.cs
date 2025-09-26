@@ -42,8 +42,7 @@ namespace CyberSpeed.Manager
                 score = matchManager.totalScore,
                 gameTimer = Time.time - matchManager.gameStartTime,
                 cardID = activeCards.Select(card => card.CardID).ToList(),
-                cardMatched = activeCards.Select(card => card.IsMatched).ToList(),
-                isFlipped = activeCards.Select(card => card.IsFlipped).ToList()
+                cardMatched = activeCards.Select(card => card.IsMatched).ToList()
             };
 
             // string json = JsonUtility.ToJson(saveData, true);
