@@ -43,6 +43,7 @@ namespace CyberSpeed.UI
         private MatchManager matchManager;
         private StringBuilder timerStringBuilder = new StringBuilder(8);
         private Transform gridTransform;
+        private CardFactory cardFactory;
 
         void Awake()
         {
@@ -53,6 +54,9 @@ namespace CyberSpeed.UI
             gameManager = GameManager.Instance;
             matchManager = MatchManager.Instance;
             gridTransform = cardGrid.transform;
+
+            // Initialize the simple card factory
+            cardFactory = new CardFactory(cardPool, gameManager.GetCardData());
         }
 
         private void OnEnable()
@@ -149,20 +153,11 @@ namespace CyberSpeed.UI
         {
             activeCards.Clear();
 
-            CardSO cardData = gameManager.GetCardData();
+            // Use factory to create cards
+            activeCards = cardFactory.CreateCards(cardIDs, gridTransform, matchManager.HandleCardClick);
 
-            for (int i = 0; i < cardIDs.Count; i++)
-            {
-                var cardInfo = cardData.cardDataList[cardIDs[i]];
-                var cardObj = cardPool.GetObjectFromPool();
-
-                cardObj.transform.SetParent(gridTransform, false);
-                cardObj.gameObject.SetActive(true);
-
-                var gameCard = cardObj.GetComponent<GameCard>();
-                gameCard.InitCard(cardInfo.cardID, cardInfo.cardSprite, matchManager.HandleCardClick);
-                activeCards.Add(gameCard);
-            }
+            // Update grid with new cards
+            cardGrid.SetCards(activeCards);
         }
 
         private void SpawnCards(GameSaveData savedLevelData)
@@ -170,20 +165,17 @@ namespace CyberSpeed.UI
             activeCards.Clear();
 
             List<int> cardIDs = savedLevelData.cardID;
-            CardSO cardData = gameManager.GetCardData();
 
+            // Use factory to create saved cards
             for (int i = 0; i < cardIDs.Count; i++)
             {
-                var cardInfo = cardData.cardDataList[cardIDs[i]];
-                var cardObj = cardPool.GetObjectFromPool();
-
-                cardObj.transform.SetParent(gridTransform, false);
-                cardObj.gameObject.SetActive(true);
-
-                var gameCard = cardObj.GetComponent<GameCard>();
-                gameCard.InitSavedCard(cardInfo.cardID, cardInfo.cardSprite, savedLevelData.isFlipped[i], savedLevelData.cardMatched[i], matchManager.HandleCardClick);
-                activeCards.Add(gameCard);
+                var card = cardFactory.CreateSavedCard(cardIDs[i], gridTransform,
+                    savedLevelData.isFlipped[i], savedLevelData.cardMatched[i], matchManager.HandleCardClick);
+                activeCards.Add(card);
             }
+
+            // Update grid with new cards
+            cardGrid.SetCards(activeCards);
         }
 
         private IEnumerator PreviewGrid(float previewDuration)
@@ -277,8 +269,9 @@ namespace CyberSpeed.UI
 
         private void ClearGrid()
         {
-            // Return all cards to object pool and clear grid - optimized to call ReleaseAll only once
-            cardPool.ReleaseAll();
+            // Use factory to release all cards and clear grid
+            cardFactory.ReleaseAllCards();
+            cardGrid.ClearCards();
         }
 
         private void ResetUIElements()
