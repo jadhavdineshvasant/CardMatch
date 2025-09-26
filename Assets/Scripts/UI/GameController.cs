@@ -80,11 +80,11 @@ namespace CyberSpeed.UI
             CleanupGameplayScreen();
         }
 
-        public void OnLevelResumed(DifficultyLevelData levelData, GameSaveData savedLevelData)
+        public void OnLevelStarted(DifficultyLevelData levelData, GameSaveData savedLevelData = null)
         {
+            // Common setup
             AudioManager.Instance.StopBGMusic();
             AudioManager.Instance.PlayGameStartSFX();
-
             root.gameObject.SetActive(true);
 
             if (!levelData.ValidateLevelData()) return;
@@ -92,33 +92,31 @@ namespace CyberSpeed.UI
             ResetUIState();
             SetupGridLayout(levelData.colsCount);
 
-            DispatchScoreUpdate(savedLevelData);
+            bool isResumedGame = savedLevelData != null;
 
-            SpawnCards(savedLevelData);
+            if (isResumedGame)
+            {
+                // Resumed game logic
+                DispatchScoreUpdate(savedLevelData);
+                SpawnCards(savedLevelData);
+                matchManager.InitializeSavedGame(activeCards, savedLevelData);
+            }
+            else
+            {
+                // New game logic
+                int totalGridElements = levelData.rowsCount * levelData.colsCount;
+                List<int> shuffledCardIDs = GenerateShuffledCardPairs(totalGridElements);
+                SpawnCards(shuffledCardIDs);
+                matchManager.InitializeGame(activeCards);
 
-            matchManager.InitializeSavedGame(activeCards, savedLevelData);
+                // Start preview only for new games
+                StartCoroutine(PreviewGrid(levelData.previewDuration));
+            }
         }
 
-        public void OnLevelStarted(DifficultyLevelData levelData)
+        public void OnLevelResumed(DifficultyLevelData levelData, GameSaveData savedLevelData)
         {
-            AudioManager.Instance.StopBGMusic();
-            AudioManager.Instance.PlayGameStartSFX();
-
-            root.gameObject.SetActive(true);
-
-            if (!levelData.ValidateLevelData()) return;
-
-            ResetUIState();
-            SetupGridLayout(levelData.colsCount);
-            int totalGridElements = levelData.rowsCount * levelData.colsCount;
-
-            List<int> shuffledCardIDs = GenerateShuffledCardPairs(totalGridElements);
-            SpawnCards(shuffledCardIDs);
-
-            // Initialize the match manager with the spawned cards
-            matchManager.InitializeGame(activeCards);
-
-            StartCoroutine(PreviewGrid(levelData.previewDuration));
+            OnLevelStarted(levelData, savedLevelData);
         }
 
         private void ResetUIState()
