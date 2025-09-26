@@ -23,6 +23,7 @@ namespace CyberSpeed.Manager
         [SerializeField] private ResultScreenUI resultScreenUIHandler;
         [SerializeField] private ExitPopupUI exitUIHandler;
         [SerializeField] private SavePopupUI saveUIHandler;
+        [SerializeField] private LoadSavedGamePopupUI loadSavedGameUIHandler;
         [SerializeField] private GameController gameHandler;
 
         public static event Action OnExitYes;
@@ -91,6 +92,12 @@ namespace CyberSpeed.Manager
 
         private void OnLevelClicked(DifficultyLevelData levelData)
         {
+            if (levelData.IsSavedLevelExists())
+            {
+                ShowLoadSavedGamePopupUI();
+                return;
+            }
+
             selectedLevel = levelData;
             HideAllScreens();
             gameHandler.OnLevelStarted(levelData);
@@ -141,6 +148,26 @@ namespace CyberSpeed.Manager
             saveUIHandler.gameObject.SetActive(false);
         }
         #endregion
+
+
+        #region Load Saved Game Popup Show/Hide
+        public void ShowLoadSavedGamePopupUI()
+        {
+            loadSavedGameUIHandler.gameObject.SetActive(true);
+        }
+
+        public void LoadSavedGameYes()
+        {
+            // call load functionality from here
+            LoadSavedGameProgress();
+        }
+
+        public void HideLoadSavedGamePopupUI()
+        {
+            loadSavedGameUIHandler.gameObject.SetActive(false);
+        }
+        #endregion
+
         public void OnPlayAgainClicked()
         {
             HideAllScreens();
@@ -159,11 +186,18 @@ namespace CyberSpeed.Manager
             introUIHandler.gameObject.SetActive(false);
             resultScreenUIHandler.gameObject.SetActive(false);
             exitUIHandler.gameObject.SetActive(false);
+            saveUIHandler.gameObject.SetActive(false);
+            loadSavedGameUIHandler.gameObject.SetActive(false);
         }
 
         private void SaveGameProgress()
         {
             SaveManager.Instance.SaveGameProgress();
+        }
+
+        private void LoadSavedGameProgress()
+        {
+            Debug.Log("loading saved game progress");
         }
 
         public CardSO GetCardData() => cardSO;

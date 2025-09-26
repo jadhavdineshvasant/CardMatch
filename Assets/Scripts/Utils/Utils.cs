@@ -73,7 +73,7 @@ public static class Utilities
         return true;
     }
 
-    public static bool IsSaveLevelDataExist(this DifficultyLevelData levelData)
+    public static bool IsSavedLevelExists(this DifficultyLevelData levelData)
     {
         string fileName = $"{levelData.rowsCount}_{levelData.colsCount}.json";
         string savePath = Path.Combine(Application.persistentDataPath, fileName);

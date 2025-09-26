@@ -27,7 +27,7 @@ namespace CyberSpeed.UI
             levelTitle.text = $"{levelData.rowsCount} x {levelData.colsCount}";
             levelName.text = levelData.levelName;
             levelName.color = levelData.titleColor;
-            saveIcon.gameObject.SetActive(levelData.IsSaveLevelDataExist());
+            saveIcon.gameObject.SetActive(levelData.IsSavedLevelExists());
             scoreMultiplier.text = $"( +{levelData.scoreMultiplier} per match )";
 
             Button btn = this.GetComponent<Button>();

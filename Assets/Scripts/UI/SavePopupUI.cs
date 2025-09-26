@@ -4,31 +4,26 @@ using UnityEngine;
 using UnityEngine.UI;
 using CyberSpeed.Manager;
 
-public class SavePopupUI : MonoBehaviour
+namespace CyberSpeed.UI
 {
-    [SerializeField] Button closeBtn;
-    [SerializeField] Button saveYesBtn;
-
-    private void OnEnable()
+    public class SavePopupUI : MonoBehaviour
     {
-        closeBtn.onClick.AddListener(OnCloseButtonClicked);
-        saveYesBtn.onClick.AddListener(OnSaveYesButtonClicked);
-    }
+        [SerializeField] Button saveYesBtn;
 
-    private void OnDisable()
-    {
-        closeBtn.onClick.RemoveListener(OnCloseButtonClicked);
-        saveYesBtn.onClick.RemoveListener(OnSaveYesButtonClicked);
-    }
+        private void OnEnable()
+        {
+            saveYesBtn.onClick.AddListener(OnSaveYesButtonClicked);
+        }
 
-    private void OnCloseButtonClicked()
-    {
-        GameManager.Instance.HideSavePopupUI();
-    }
+        private void OnDisable()
+        {
+            saveYesBtn.onClick.RemoveListener(OnSaveYesButtonClicked);
+        }
 
-    private void OnSaveYesButtonClicked()
-    {
-        GameManager.Instance.SaveGameYes();
-        GameManager.Instance.HideSavePopupUI();
+        private void OnSaveYesButtonClicked()
+        {
+            GameManager.Instance.SaveGameYes();
+            GameManager.Instance.HideSavePopupUI();
+        }
     }
 }
