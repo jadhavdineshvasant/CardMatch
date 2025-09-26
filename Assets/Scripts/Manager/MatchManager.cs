@@ -67,6 +67,17 @@ namespace CyberSpeed.Manager
             Debug.Log($"Game initialized with {activeCards.Count} cards");
         }
 
+        public void InitializeSavedGame(List<GameCard> cards, GameSaveData savedLevelData)
+        {
+            InitializeGame(cards);
+
+            streak = savedLevelData.streak;
+            totalScore = savedLevelData.score;
+            totalTurns = savedLevelData.turns;
+            totalMatches = savedLevelData.matches;
+            bestComboStreak = savedLevelData.streak;
+        }
+
         public void StartGame()
         {
             gameStartTime = Time.time;
@@ -243,12 +254,10 @@ namespace CyberSpeed.Manager
             };
 
             EventDispatcher.Instance.Dispatch(EventConstants.ON_SCORE_UPDATED, scoreData);
+
             Debug.Log($"Score updated: Turns: {totalTurns}, Matches: {totalMatches}, Current Streak: {streak}, Best Streak: {bestComboStreak}, Score: {totalScore}");
         }
 
-        public List<GameCard> GetActiveCards()
-        {
-            return activeCards;
-        }
+        public List<GameCard> GetActiveCards() => activeCards;
     }
 }

@@ -31,6 +31,7 @@ namespace CyberSpeed.UI
 
         void OnLoadSavedGameNoButtonClicked()
         {
+            GameManager.Instance.LoadNewGame();
             GameManager.Instance.HideLoadSavedGamePopupUI();
         }
     }

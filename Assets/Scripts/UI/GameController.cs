@@ -59,6 +59,25 @@ namespace CyberSpeed.UI
             CleanupGameplayScreen();
         }
 
+        public void OnLevelResumed(DifficultyLevelData levelData, GameSaveData savedLevelData)
+        {
+            AudioManager.Instance.StopBGMusic();
+            AudioManager.Instance.PlayGameStartSFX();
+
+            root.gameObject.SetActive(true);
+
+            if (!levelData.ValidateLevelData()) return;
+
+            ResetUIState();
+            SetupGridLayout(levelData.colsCount);
+
+            DispatchScoreUpdate(savedLevelData);
+
+            SpawnCards(savedLevelData);
+
+            MatchManager.Instance.InitializeSavedGame(activeCards, savedLevelData);
+        }
+
         public void OnLevelStarted(DifficultyLevelData levelData)
         {
             AudioManager.Instance.StopBGMusic();
@@ -128,6 +147,33 @@ namespace CyberSpeed.UI
 
                 var gameCard = cardObj.GetComponent<GameCard>();
                 gameCard.InitCard(cardInfo.cardID, cardInfo.cardSprite, MatchManager.Instance.HandleCardClick);
+                activeCards.Add(gameCard);
+            }
+        }
+
+        private void SpawnCards(GameSaveData savedLevelData)
+        {
+            activeCards.Clear();
+
+            List<int> cardIDs = savedLevelData.cardID;
+
+            GameManager gameManager = GameManager.Instance;
+            CardSO cardData = gameManager.GetCardData();
+
+            Transform gridTransform = cardGrid.transform;
+
+            for (int i = 0; i < cardIDs.Count; i++)
+            {
+                var cardInfo = cardData.cardDataList[cardIDs[i]];
+                var cardObj = cardPool.GetObjectFromPool();
+
+                cardObj.transform.SetParent(gridTransform, false);
+                cardObj.gameObject.SetActive(true);
+
+                // Debug.Log(cardInfo.cardSprite);
+
+                var gameCard = cardObj.GetComponent<GameCard>();
+                gameCard.InitSavedCard(cardInfo.cardID, cardInfo.cardSprite, savedLevelData.isFlipped[i], savedLevelData.cardMatched[i], MatchManager.Instance.HandleCardClick);
                 activeCards.Add(gameCard);
             }
         }
@@ -250,6 +296,20 @@ namespace CyberSpeed.UI
         private void OnSaveButtonClicked()
         {
             GameManager.Instance.ShowSavePopupUI();
+        }
+
+        private void DispatchScoreUpdate(GameSaveData savedLevelData)
+        {
+            var scoreData = new ScoreData
+            {
+                GameTime = Time.time - gameStartTime,
+                TotalTurns = savedLevelData.turns,
+                TotalMatches = savedLevelData.matches,
+                TotalComboStreaks = (savedLevelData.streak - 1) < 0 ? 0 : savedLevelData.streak - 1,
+                TotalScore = savedLevelData.score
+            };
+
+            EventDispatcher.Instance.Dispatch(EventConstants.ON_SCORE_UPDATED, scoreData);
         }
     }
 }

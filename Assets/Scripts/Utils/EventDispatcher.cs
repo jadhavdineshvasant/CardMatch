@@ -152,7 +152,7 @@ namespace CyberSpeed.Utils
         private void OnDestroy()
         {
             // Clean up listeners to avoid memory leaks
-            eventListeners.Clear();
+            if (eventListeners != null) eventListeners.Clear();
         }
 
         private void OnApplicationQuit()

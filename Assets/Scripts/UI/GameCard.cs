@@ -24,44 +24,63 @@ namespace CyberSpeed.UI
         [Header("Card Data")]
         [SerializeField] private int cardID;
         [SerializeField] private Sprite cardSprite;
+        public Sprite CardSprite
+        {
+            get { return cardSprite; }
+            private set
+            {
+                cardSprite = value;
+                front.sprite = value;
+            }
+        }
+
+        public static event Action<GameCard> OnCardFlipped;
+        private Action<GameCard> onCardClickedCallback;
 
         private bool isFlipped = false;
         private bool isAnimating = false;
         private bool isInteractable = true;
         private bool isMatched = false;
-
-        public static event Action<GameCard> OnCardFlipped;
-        private Action<GameCard> onCardClickedCallback;
-
         public int CardID { get { return cardID; } private set { cardID = value; } }
         public bool IsFlipped { get { return isFlipped; } private set { isFlipped = value; } }
         public bool IsAnimating { get { return isAnimating; } private set { isAnimating = value; } }
         public bool IsInteractable { get { return isInteractable; } private set { isInteractable = value; } }
-        public bool IsMatched { get { return isMatched; } private set { isMatched = value; } }
-        public Sprite CardSprite { get { return cardSprite; } private set { cardSprite = value; } }
+        public bool IsMatched
+        {
+            get { return isMatched; }
+            private set
+            {
+                isMatched = value;
+                if (value) SetMatchedAlpha();
+            }
+        }
 
         public void InitCard(int cardID, Sprite frontSprite, Action<GameCard> cardClicked)
         {
             ResetCard();
             onCardClickedCallback = cardClicked;
             this.cardID = cardID;
-            this.cardSprite = frontSprite;
+            this.CardSprite = frontSprite;
 
             // Ensure card starts face down
             SetCardVisuals(false);
+        }
 
-            // Set front image if sprite is assigned
-            if (frontSprite != null && front != null)
-            {
-                front.sprite = frontSprite;
-            }
+        public void InitSavedCard(int cardID, Sprite frontSprite, bool isFlipped, bool isMatched, Action<GameCard> cardClicked)
+        {
+            ResetCard();
+            onCardClickedCallback = cardClicked;
+            this.cardID = cardID;
+            this.CardSprite = frontSprite;
+            this.IsFlipped = isFlipped;
+            this.IsMatched = isMatched;
+            SetCardVisuals(isFlipped);
         }
 
         public void Matched()
         {
             IsMatched = true;
             IsInteractable = false;
-            SetMatchedAlpha();
         }
 
         private void SetMatchedAlpha()
@@ -76,22 +95,22 @@ namespace CyberSpeed.UI
 
         public void SetInteractable(bool interactable)
         {
-            isInteractable = interactable;
+            IsInteractable = interactable;
         }
 
         public void EnableInteraction()
         {
-            isInteractable = true;
+            IsInteractable = true;
         }
 
         public void DisableInteraction()
         {
-            isInteractable = false;
+            IsInteractable = false;
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (!isInteractable || isAnimating || isFlipped || IsMatched)
+            if (!IsInteractable || IsAnimating || IsFlipped || IsMatched)
                 return;
 
             FlipCard();
@@ -100,7 +119,7 @@ namespace CyberSpeed.UI
 
         public void FlipCard()
         {
-            if (isAnimating)
+            if (IsAnimating)
                 return;
 
             StartCoroutine(FlipCardAnimation());
@@ -108,7 +127,7 @@ namespace CyberSpeed.UI
 
         public void FlipToFront(bool animate = true)
         {
-            if (isFlipped)
+            if (IsFlipped)
                 return;
 
             if (animate)
@@ -117,14 +136,14 @@ namespace CyberSpeed.UI
             }
             else
             {
-                isFlipped = true;
+                IsFlipped = true;
                 SetCardVisuals(true);
             }
         }
 
         public void FlipToBack(bool animate = true)
         {
-            if (!isFlipped)
+            if (!IsFlipped)
                 return;
 
             if (animate)
@@ -133,14 +152,14 @@ namespace CyberSpeed.UI
             }
             else
             {
-                isFlipped = false;
+                IsFlipped = false;
                 SetCardVisuals(false);
             }
         }
 
         private IEnumerator FlipCardAnimation()
         {
-            isAnimating = true;
+            IsAnimating = true;
 
             // First half of flip - scale down to 0 on X axis
             float halfFlipTime = cardFlipTime * 0.5f;
@@ -159,8 +178,8 @@ namespace CyberSpeed.UI
             }
 
             // Switch card visuals at the middle of animation
-            isFlipped = !isFlipped;
-            SetCardVisuals(isFlipped);
+            IsFlipped = !IsFlipped;
+            SetCardVisuals(IsFlipped);
 
             // Second half of flip - scale back to original
             elapsedTime = 0f;
@@ -179,7 +198,7 @@ namespace CyberSpeed.UI
             // Ensure final scale is correct
             transform.localScale = endScale;
 
-            isAnimating = false;
+            IsAnimating = false;
             OnCardFlipped?.Invoke(this);
         }
 
@@ -196,16 +215,16 @@ namespace CyberSpeed.UI
         {
             StopAllCoroutines();
             ResetMatchedAlpha();
-            isFlipped = false;
-            isAnimating = false;
-            isInteractable = true; // Reset interactable state
-            isMatched = false; // Reset matched state
+            IsFlipped = false;
+            IsAnimating = false;
+            IsInteractable = true; // Reset interactable state
+            IsMatched = false; // Reset matched state
             transform.localScale = Vector3.one;
             SetCardVisuals(false);
 
             // Clear any previous card data
             cardID = 0;
-            cardSprite = null;
+            CardSprite = null;
             onCardClickedCallback = null;
 
             // Reset front image

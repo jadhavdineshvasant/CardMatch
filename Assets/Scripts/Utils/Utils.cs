@@ -80,4 +80,26 @@ public static class Utilities
 
         return File.Exists(savePath);
     }
+
+    public static GameSaveData GetSavedLevelData(this DifficultyLevelData levelData)
+    {
+        if (!IsSavedLevelExists(levelData)) return null;
+
+        string fileName = $"{levelData.rowsCount}_{levelData.colsCount}.json";
+        string savePath = Path.Combine(Application.persistentDataPath, fileName);
+
+        string json = File.ReadAllText(savePath);
+        return JsonUtility.FromJson<GameSaveData>(json);
+    }
+
+    public static void ClearSavedLevelData(this DifficultyLevelData levelData)
+    {
+        string fileName = $"{levelData.rowsCount}_{levelData.colsCount}.json";
+        string savePath = Path.Combine(Application.persistentDataPath, fileName);
+
+        if (File.Exists(savePath))
+        {
+            File.Delete(savePath);
+        }
+    }
 }

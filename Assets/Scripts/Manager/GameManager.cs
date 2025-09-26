@@ -92,13 +92,14 @@ namespace CyberSpeed.Manager
 
         private void OnLevelClicked(DifficultyLevelData levelData)
         {
+            selectedLevel = levelData;
+
             if (levelData.IsSavedLevelExists())
             {
                 ShowLoadSavedGamePopupUI();
                 return;
             }
 
-            selectedLevel = levelData;
             HideAllScreens();
             gameHandler.OnLevelStarted(levelData);
         }
@@ -161,6 +162,12 @@ namespace CyberSpeed.Manager
             // call load functionality from here
             LoadSavedGameProgress();
         }
+        public void LoadNewGame()
+        {
+            selectedLevel.ClearSavedLevelData();
+            HideAllScreens();
+            gameHandler.OnLevelStarted(selectedLevel);
+        }
 
         public void HideLoadSavedGamePopupUI()
         {
@@ -198,6 +205,8 @@ namespace CyberSpeed.Manager
         private void LoadSavedGameProgress()
         {
             Debug.Log("loading saved game progress");
+            GameSaveData savedLevelData = selectedLevel.GetSavedLevelData();
+            gameHandler.OnLevelResumed(selectedLevel, savedLevelData);
         }
 
         public CardSO GetCardData() => cardSO;
