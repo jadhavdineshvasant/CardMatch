@@ -108,6 +108,10 @@ namespace CyberSpeed.UI
                 DispatchScoreUpdate(savedLevelData);
                 SpawnCards(savedLevelData);
                 matchManager.InitializeSavedGame(activeCards, savedLevelData);
+
+                // Start timer for resumed games from saved time
+                gameStartTime = Time.time - savedLevelData.gameTimer;
+                StartCoroutine(UpdateGameTimer());
             }
             else
             {
@@ -131,7 +135,6 @@ namespace CyberSpeed.UI
         {
             StopAllCoroutines();
             isPreviewMode = false;
-            gameStartTime = Time.time;
             memoriseMSG.SetActive(false);
         }
 
@@ -221,6 +224,9 @@ namespace CyberSpeed.UI
             memoriseMSG.SetActive(false);
             isPreviewMode = false;
 
+            // Set game start time when actual gameplay begins (after preview)
+            gameStartTime = Time.time;
+
             // Start the match manager game and timer
             matchManager.StartGame();
             StartCoroutine(UpdateGameTimer());
@@ -276,7 +282,7 @@ namespace CyberSpeed.UI
         private void ResetUIElements()
         {
             // Reset timer display
-            gameTimer.text = "00:00";
+            gameTimer.text = "";
 
             // Hide memorize message if showing
             memoriseMSG.SetActive(false);
